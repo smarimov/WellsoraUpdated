@@ -1,0 +1,50 @@
+.autocomplete
+    &__control
+        border: 1px solid #E5E7E7
+        border-radius: 8px
+        padding: 11px 12px
+        @apply flex items-center relative
+        & input
+            outline: none
+            width: 100%
+            background-color: transparent
+            font-size: 14px
+            height: 18px
+            appearance: none
+        &-chip
+            padding: 6px 10px
+            @apply border bg-Light rounded-lg
+        &-tags
+            @apply flex flex-wrap gap-2 grow items-center
+            & > input
+                align-self: stretch
+        &.autocomplete__disabled
+            @apply bg-Light cursor-default text-lightGray
+    &__dropdown-icon, &__clear
+        cursor: pointer
+        @apply rounded-full h-5 w-5 flex items-center justify-center child:child:stroke-lightGray
+        &.icon__disabled
+            cursor: default
+        &:hover
+            @apply bg-Light
+    &__clear
+        @apply mr-1 right-10
+    &__list
+        padding: 16px 8px
+        background-color: white
+        box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.10)
+        overflow-y: auto
+        z-index: 11110000
+        border-radius: 8px
+        max-height: 30px
+        &-item
+            padding: 6px
+            border-radius: 8px
+            cursor: pointer
+            margin-bottom: 4px
+            &:hover
+                @apply bg-Light
+            &:last-of-type
+                margin-bottom: 0
+            &--active
+                @apply bg-Light

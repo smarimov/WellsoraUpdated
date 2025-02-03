@@ -1,0 +1,57 @@
+.label
+    display: flex
+    justify-content: center
+    align-items: center
+    border-radius: 16px
+    font-size: 12px
+    font-style: normal
+    font-weight: 500
+    line-height: 16px
+    box-shadow: 0px -4px 8px 0px rgba(139, 226, 211, 0.10) inset, 0px 0px 2px -0.5px rgba(0, 182, 151, 0.13), 0px 2px 4px 0px rgba(0, 182, 151, 0.05)
+    &>span
+        @apply text-white
+    &--success
+        @apply bg-Green-main
+    &--error
+        @apply bg-Red-main
+    &--warning
+        @apply bg-Orange-main
+    &--secondary
+        @apply bg-Navy-main
+    &--info
+        @apply bg-blue-500
+    &--primary
+        @apply bg-Purple-main
+    &--muted
+        background: rgba(124, 58, 237, 0.06)
+        &>span
+            @apply text-Navy-main
+
+    &--outlined
+        background: rgba(255, 255, 255, 0.60)
+        border: 1px solid rgba(0, 141, 15, 0.10)
+        border: 1px solid
+        &.label--success
+            @apply border-Green-main
+            &>span
+                @apply text-Green-main
+        &.label--error
+            @apply border-Red-main
+            &>span
+                @apply text-Red-main
+        &.label--warning
+            @apply border-Orange-main
+            &>span
+                @apply text-Orange-main
+        &.label--secondary
+            border-color: rgba(227, 227, 227, 0.47)
+            &>span
+                @apply text-Navy-main
+        &.label--info
+            @apply border-blue-500
+            &>span
+                @apply text-blue-500
+        &.label--primary
+            @apply border-Purple-main
+            &>span
+                @apply text-Purple-main

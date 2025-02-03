@@ -1,0 +1,44 @@
+.tab_with_path
+    display: flex
+    align-items: center
+    gap: 8px
+    height: 110px
+    background: #EFF8FC
+    // border-top-left-radius: 16px
+    // border-top-right-radius: 16px
+    overflow: hidden
+    padding-left: 20px
+    padding-right: 20px
+.tab-link
+    display: flex
+    align-items: center
+    padding: 8px 20px
+    font-size: 12px
+    font-weight: 700
+    color: #878787 !important
+    border: none
+    background: none
+    cursor: pointer
+    outline: none
+    position: relative
+    &:hover
+        background: transparent
+    &::after
+        content: ''
+        position: absolute 
+        bottom: -1px
+        left: 0
+        width: 100%
+        height: 2px
+        transform-origin: center center
+        transform: scaleX(0)
+        background-color: #1B779B 
+        transition:  0.3s ease
+        
+    
+.tab-link--active 
+    @apply text-Purple-main !important
+    transition: color 0.3s ease
+    &::after
+        transform: scaleX(1)
+

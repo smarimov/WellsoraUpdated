@@ -1,0 +1,64 @@
+.button-variant
+    &__contained-primary
+        @apply bg-Purple-main !text-white
+        &:hover
+            @apply bg-Purple-hover text-white
+    &__contained-error
+        @apply bg-Red-main text-white
+        &:hover
+            @apply bg-Red-hover
+    &__contained-inherit
+        @apply bg-inherit-light text-black
+        &:hover
+            @apply bg-inherit-dark
+    &__contained-second
+        @apply bg-Navy-main text-white
+        &:hover
+            @apply bg-Navy-hover
+    &__contained-warning
+        @apply bg-Orange-main
+        &:hover
+            @apply bg-Orange-hover
+    &__contained-info
+        @apply bg-blue-600 text-white
+        &:hover
+            @apply bg-blue-700
+    &__contained-success
+        @apply bg-Green-main !text-white
+        &:hover
+            @apply bg-Green-hover
+    &__outline-primary
+        @apply border border-Purple-main text-Purple-main bg-white
+        &:hover
+            @apply bg-Purple-light text-white
+    &__outline-error
+        @apply border border-Red-main text-Red-main bg-white
+        &:hover
+            @apply bg-Red-light text-white
+    &__outline-inherit
+        @apply border border-[#E3E3E3] bg-white
+        &:hover
+            @apply bg-inherit-light
+    &__outline-second
+        @apply border border-Navy-light text-Navy-main bg-white
+        &:hover
+            @apply bg-Navy-light
+    &__outline-warning
+        @apply border border-Orange-main text-Orange-main bg-white
+        &:hover
+            @apply bg-Orange-light
+    &__outline-info
+        @apply border border-blue-600 text-blue-700 bg-white
+        &:hover
+            @apply bg-blue-50
+    &__outline-success
+        @apply border border-Green-main text-Green-main bg-white
+        &:hover
+            @apply bg-Green-light
+
+.sidebar:hover
+    & .create-document-button
+        &--label
+            overflow: hidden
+            white-space: nowrap
+            @apply block !important
