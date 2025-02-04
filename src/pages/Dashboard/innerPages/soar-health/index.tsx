@@ -1,4 +1,3 @@
-import { Button } from "@/components/Button";
 import Collapse from "@/components/Collapse";
 import { Input } from "@/components/Form";
 import { Icon } from "@/components/Icon";
@@ -102,32 +101,27 @@ const SoarHeath = () => {
         title="Sora health +"
         subTitle="Your trusted partner in providing the non-clinical support you need"
       />
-      <div className="p-5 max-w-[1500px] mx-auto">
-        <div className=" mb-7">
-          <div className="flex p-3 shadow-custom h-[60px] items-center gap-3 mb-3 border border-[#F0F0F0] rounded-lg">
-            <Input
-              placeholder="e.g. what symptoms siganl hypertension? "
-              className="w-full "
-              wrapperClass="border-none"
-              rightSection={<Icon icon="Search1" color="#9E9E9E" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+      <div className="p-6 max-w-[1500px] mx-auto">
+        <div className="flex p-3 shadow-custom h-[60px] items-center gap-3 mb-7 border border-[#F0F0F0] rounded-lg">
+          <Input
+            placeholder="e.g. what symptoms siganl hypertension? "
+            className="w-full "
+            wrapperClass="border-none"
+            rightSection={<Icon icon="Search1" color="#9E9E9E" />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSoraSearch();
+              }
+            }}
+          />
+        </div>
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSoraSearch}
-            >
-              SEARCH
-            </Button>
-          </div>
-
-          <div className="px-[30px] py-5 bg-[#EFF8FC]">
-            <div className="text-lg italic font-normal text-[#9E9E9E]">
-              {" "}
-              {message}{" "}
-            </div>
+        <div className="px-[30px] py-5 mb-7 bg-[#EFF8FC]">
+          <div className="text-lg italic font-normal text-[#9E9E9E]">
+            {" "}
+            {message}{" "}
           </div>
         </div>
 

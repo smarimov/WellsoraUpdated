@@ -25,7 +25,7 @@ const NavbarWrapper = ({
 
   const navigate = useNavigate();
   return (
-    <div className="px-[30px] top-0 z-[500] left-[300px] right-0 flex items-center  bg-white gap-4  h-[130px] shadow-custom box-border border-b border-b-[#F0F0F0] fixed ">
+    <div className="px-[30px] top-0 z-[500] left-[270px] right-0 flex items-center  bg-white gap-4  h-[130px] shadow-custom box-border border-b border-b-[#F0F0F0] fixed ">
       <div className="flex flex-col mr-auto">
         <div className="flex items-center gap-3">
           <p className="text-[38px] font-medium text-[#0F1527]">{title} </p>

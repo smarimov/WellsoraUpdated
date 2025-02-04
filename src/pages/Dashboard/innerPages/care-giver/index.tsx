@@ -144,7 +144,7 @@ const CareGiver = () => {
         title="Find the Perfect Caregiver"
         subTitle="Answer the following questions and get your perfect caregiver"
       />
-      <div className="p-5 max-w-[1200px] mx-auto ">
+      <div className="p-6 max-w-[1200px] mx-auto ">
         {/* {JSON.stringify(Object.keys(selectedOptions).length)} */}
         <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
         <StepCard

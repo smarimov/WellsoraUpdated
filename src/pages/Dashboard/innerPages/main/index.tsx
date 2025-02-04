@@ -100,23 +100,20 @@ const Main = () => {
         }
         isDashboard
       />
-      <div className="flex min-w-[1300px] overflow-x-auto h-full">
+      <div className="flex min-w-[1300px] overflow-x-auto h-full gap-10">
         <div className="flex-1 min-w-0 p-4 py-5">
           <DateList
             onDateSelect={(val) => setSelected(formatAmericanDate(val))}
           />
 
-          <div
-            className="flex flex-wrap gap-3 py-5 my-1"
-            // style={{ border: "1px solid red" }}
-          >
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
+          <div className="flex flex-wrap justify-between gap-3 py-5 my-1">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  max-w-[200px] w-full  h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Total appointments
               </p>
               <span className="text-3xl font-bold ">{plans.length}</span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[200px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Upcoming week
               </p>
@@ -124,7 +121,7 @@ const Main = () => {
                 {getUpcomingAppointments(plans)}
               </span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[200px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Active caregivers
               </p>
@@ -132,7 +129,7 @@ const Main = () => {
                 {getUniquePatientCount(plans)}
               </span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[200px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Completed this week
               </p>
@@ -142,11 +139,8 @@ const Main = () => {
             </div>
           </div>
 
-          <div
-            className="flex items-center justify-between gap-3 py-5 my-1 mb-2"
-            // style={{ border: "1px solid green" }}
-          >
-            <p className="text-xl font-bold text-[#0F1527]">All appointment</p>
+          <div className="flex items-center justify-between gap-3 py-5 my-1 mb-2">
+            <p className="text-xl font-bold text-[#0F1527]">All appointments</p>
             <Input
               leftSection={<Icon icon="Search1" color="inherit" />}
               placeholder="Search"

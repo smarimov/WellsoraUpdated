@@ -63,7 +63,7 @@ const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
   return (
     <div
       ref={scrollContainerRef}
-      className="w-[410px] h-[85vh] [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2"
+      className="w-[370px] h-[85vh] [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2"
     >
       {timeSlots.map((slotTime) => {
         const slotHour = parseHour(slotTime);

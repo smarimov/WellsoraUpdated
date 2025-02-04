@@ -70,7 +70,24 @@ const AccordionItem: React.FC<IAccordianProps> = ({
         >
           <div className="question-content"> {question}</div>
           {isOpen ? (
-            <Icon icon="ArrowUp" color="inherit" size={24} />
+            // <Icon icon="ArrowUp" color="inherit" size={24} />
+            <div className=" w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18.3332 11H3.6665"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           ) : (
             <div className=" w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
               <svg
@@ -81,8 +98,8 @@ const AccordionItem: React.FC<IAccordianProps> = ({
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M8 0H6V6H0V8H6V14H8V8H14V6H8V0Z"
                   fill="white"
                 />

@@ -5,11 +5,11 @@ import "./style.sass";
 
 const Sidebar = () => {
   return (
-    <div className=" flex flex-col h-full flex-1 justify-start  bg-Purple-main p-6 sidebar w-[300px] fixed ">
+    <div className=" flex flex-col h-full flex-1 justify-start  bg-Purple-main p-6 sidebar w-[270px] fixed ">
       {/* <div className="w-[229px] h-[60px] mx-auto mb-[56px]">
         <img src="../assets/wellsora.png" style={{ objectFit: "cover" }} />
       </div> */}
-      <div className="mb-10 text-6xl font-extrabold text-center text-white">
+      <div className="mb-10 text-5xl font-extrabold text-center text-white">
         Wellsora
       </div>
       <ul>

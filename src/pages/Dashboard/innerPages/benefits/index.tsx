@@ -168,30 +168,24 @@ const Benefits = () => {
           </Button>
         }
       />
-      <div className="p-5 h-full mx-auto max-w-[1500px]">
-        <div className="flex p-3 shadow-custom h-[60px] items-center gap-3 mb-3 border border-[#F0F0F0] rounded-lg">
+      <div className="p-6 h-full mx-auto max-w-[1500px]">
+        <div className="flex p-3 shadow-custom h-[60px] items-center gap-3 mb-7 border border-[#F0F0F0] rounded-lg">
           <Input
             placeholder="Search procedures, treatments or services...."
             className="w-full "
             wrapperClass="border-none"
-<<<<<<< HEAD
-            // rightSection={<Icon icon="Search1" color="#9E9E9E" />}
+            rightSection={<Icon icon="Search1" color="#9E9E9E" />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleBenefitSearch();
+              }
+            }}
           />
-          <Button
-            className=" text-nowrap h-[56px]"
-            onClick={handleBenefitSearch}
-          >
-            Search Benefits
-          </Button>
-=======
-            rightSection={<Icon icon="Search1" color="#9E9E9E" />}
-          />
->>>>>>> bba2a25 (fix benifit)
         </div>
 
-        <div className="px-[30px] py-5 bg-[#EFF8FC] my-4">
+        <div className="px-[30px] py-5 bg-[#EFF8FC] my-7">
           <div className="text-lg italic font-normal text-[#9E9E9E]">
             {" "}
             {message}{" "}

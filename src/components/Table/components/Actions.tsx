@@ -15,7 +15,7 @@ export const TableActions = ({ onDelete, onEdit, onView }: Partial<Props>) => {
           color="inherit"
           icon={<Icon icon="View" size={24} />}
           onClick={onView}
-          className="w-8 h-8 p-0 border-0"
+          className="w-8 h-8 p-0 bg-transparent border-0"
         />
       )}
       {onEdit != null && (
@@ -24,7 +24,7 @@ export const TableActions = ({ onDelete, onEdit, onView }: Partial<Props>) => {
           color="inherit"
           icon={<Icon icon="PencilEdit02" color="inherit" size={24} />}
           onClick={onEdit}
-          className="w-8 h-8 p-0 border-0"
+          className="w-8 h-8 p-0 bg-transparent border-0"
         />
       )}
       {onDelete != null && (
@@ -33,7 +33,7 @@ export const TableActions = ({ onDelete, onEdit, onView }: Partial<Props>) => {
           color="error"
           icon={<Icon icon="Delete02" color="inherit" size={24} />}
           onClick={onDelete}
-          className="w-8 h-8 p-0 border-0"
+          className="w-8 h-8 p-0 bg-transparent border-0"
         />
       )}
     </div>
