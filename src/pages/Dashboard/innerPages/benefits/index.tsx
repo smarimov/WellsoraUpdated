@@ -154,7 +154,8 @@ const Benefits = () => {
   return (
     <>
       <NavbarWrapper
-        title="Your personalized benefits"
+        title="Benefits"
+        subTitle="Explore your benefits: cost, coverage & savings"
         action={
           <Button
             variant="contained"
@@ -173,6 +174,7 @@ const Benefits = () => {
             placeholder="Search procedures, treatments or services...."
             className="w-full "
             wrapperClass="border-none"
+<<<<<<< HEAD
             // rightSection={<Icon icon="Search1" color="#9E9E9E" />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -183,6 +185,10 @@ const Benefits = () => {
           >
             Search Benefits
           </Button>
+=======
+            rightSection={<Icon icon="Search1" color="#9E9E9E" />}
+          />
+>>>>>>> bba2a25 (fix benifit)
         </div>
 
         <div className="px-[30px] py-5 bg-[#EFF8FC] my-4">

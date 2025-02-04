@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 export const initial: TPlan[] = [
   {
     id: "1",
-    appointmentName: "Dental checkup ",
+    appointmentName:
+      "Spinal health & posture assessment at Harvard Medical Center",
     dateTime: "2025-02-03T10:00:00.000Z",
     firstName: "John",
     lastName: "Doe",
