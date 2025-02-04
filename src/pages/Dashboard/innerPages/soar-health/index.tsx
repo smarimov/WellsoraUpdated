@@ -3,6 +3,13 @@ import Collapse from "@/components/Collapse";
 import { Input } from "@/components/Form";
 import { Icon } from "@/components/Icon";
 import NavbarWrapper from "@/components/navbar";
+import { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { set } from "react-hook-form";
+
+const SORA_SEARCH_URL = 'https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search'; // Replace with your API URL
+const AUTH_TOKEN = Cookies.get("wellsora_token");; // Replace with your actual token
 
 const options = [
   {
@@ -33,7 +40,59 @@ const options = [
                 insurance plans include emergency room visits`,
   },
 ];
+
 const SoarHeath = () => {
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [message, setMessage] = useState(
+    "Sora Health+ is your caregiving companion. We provide resources,\
+    tips, and personalized guidance to help you care for loved ones\
+    with confidence. Think of us as a supportive friend, simplifying\
+    caregiving. For medical concerns or emergencies, please call your\
+    doctor immediately."
+  );
+
+  const soraSearch = async () => {
+    try {
+      const response = await axios.post(
+        SORA_SEARCH_URL,
+        {
+          searchQuery: searchQuery,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+        }
+      );
+  
+      console.log('Response:', response.data);
+      setMessage(response.data.choices[0].message.content);
+    } catch (error: any) {
+      switch (error.response.status) {
+        case 401:
+          alert("Unauthorized. Please login and try again.");
+          break;
+        default:
+          console.error('Error:', error.response ? error.response.data : error.message);
+          break;
+      }
+      setMessage("Something went wrong. Please try again later.");
+    }
+  };
+
+  function handleSoraSearch() {
+    console.log("Search Query:", searchQuery);
+    if (searchQuery === "") {
+      setMessage(message);
+    } else {
+      console.log("Search Query:", searchQuery);
+      setMessage("Loading...");
+      soraSearch();
+    }
+  }
+
   return (
     <>
       <NavbarWrapper
@@ -46,9 +105,11 @@ const SoarHeath = () => {
             <Input
               placeholder="e.g. what symptoms siganl hypertension? "
               className="w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
 
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={handleSoraSearch}>
               SEARCH
             </Button>
           </div>
@@ -77,14 +138,7 @@ const SoarHeath = () => {
             />
           </div> */}
           <div className="px-[30px] py-5 bg-[#EFF8FC]">
-            <div className="text-lg italic font-normal text-[#9E9E9E]">
-              Lorem ipsum dolor sit amet consectetur. Sem ac at velit lacinia
-              pellentesque vestibulum sed. Nulla aliquam dolor quam adipiscing
-              ultrices. Egestas blandit vitae massa rhoncus imperdiet vulputate
-              ornare nunc. Enim libero metus cursus volutpat risus.Lorem ipsum
-              dolor sit amet consectetur. Sem ac at velit lacinia pellentesque
-              vestibulum sed.{" "}
-            </div>
+            <div className="text-lg italic font-normal text-[#9E9E9E]"> {message} </div>
           </div>
         </div>
 

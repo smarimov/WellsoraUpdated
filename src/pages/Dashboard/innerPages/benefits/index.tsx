@@ -7,6 +7,11 @@ import { useMemo, useState } from "react";
 import { ConnectionModel, InsuranceModel } from "./Modals";
 import Collapse, { TAccordian } from "@/components/Collapse";
 import { benefitFromAPi } from "@/raw";
+import Cookies from "js-cookie";
+import axios from "axios";
+
+const BENEFIT_SEARCH_URL = 'https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search'; // Replace with your API URL
+const AUTH_TOKEN = Cookies.get("wellsora_token");; // Replace with your actual token
 
 interface Benefit {
   benefitCost: {
@@ -55,6 +60,54 @@ const Benefits = () => {
   );
   const [isBenefitModal, setIsBenefitModal] = useState(false);
   const [currentBenefit, setCurrentBenefit] = useState<Benefit | null>(null);
+
+  const [message, setMessage] = useState(
+    "Instantly access your plan details with our AI-powered search. Get\
+            quick, accurate answers about your coverage, and benefits—no more\
+            navigating complex insurance documents."
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const benefitsSearch = async () => {
+    try {
+      const response = await axios.post(
+        BENEFIT_SEARCH_URL,
+        {
+          searchQuery: searchQuery,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+        }
+      );
+  
+      console.log('Response:', response.data);
+      setMessage(response.data.choices[0].message.content);
+    } catch (error: any) {
+      switch (error.response.status) {
+        case 401:
+          alert("Unauthorized. Please login and try again.");
+          break;
+        default:
+          console.error('Error:', error.response ? error.response.data : error.message);
+          break;
+      }
+      setMessage("Something went wrong. Please try again later.");
+    }
+  };
+
+  const handleBenefitSearch = () => {
+    console.log("Search Query:", searchQuery);
+    if (searchQuery === "") {
+      setMessage(message);
+    } else {
+      console.log("Search Query:", searchQuery);
+      setMessage("Loading...");
+      benefitsSearch();
+    }
+  }
 
   const closeAndResetModel = () => {
     setIsOpen(false);
@@ -115,18 +168,13 @@ const Benefits = () => {
             placeholder="Search procedures, treatments or services...."
             wrapperClass=" h-[56px]"
             className="w-full"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Button className=" text-nowrap h-[56px]">Search Benefits</Button>
+          <Button className=" text-nowrap h-[56px]" onClick={handleBenefitSearch}>Search Benefits</Button>
         </div>
         <div className="px-[30px] py-5 bg-[#EFF8FC] my-4">
-          <div className="text-lg italic font-normal text-[#9E9E9E]">
-            Lorem ipsum dolor sit amet consectetur. Sem ac at velit lacinia
-            pellentesque vestibulum sed. Nulla aliquam dolor quam adipiscing
-            ultrices. Egestas blandit vitae massa rhoncus imperdiet vulputate
-            ornare nunc. Enim libero metus cursus volutpat risus.Lorem ipsum
-            dolor sit amet consectetur. Sem ac at velit lacinia pellentesque
-            vestibulum sed.{" "}
-          </div>
+          <div className="text-lg italic font-normal text-[#9E9E9E]"> {message} </div>
         </div>
         <Collapse accordianData={accordionData} />
       </div>
