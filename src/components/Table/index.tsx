@@ -102,7 +102,7 @@ export const Table = <T extends object>(props: ITableProps<T>) => {
               key={index}
               className={clsx(
                 "custom-table__head-cell",
-                dataKey.startsWith("action") && "!text-right",
+                // dataKey.startsWith("action") && "!text-right",
                 className
               )}
               style={style}

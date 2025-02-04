@@ -68,11 +68,26 @@ const AccordionItem: React.FC<IAccordianProps> = ({
             isOpen && "active-collapse"
           )}
         >
-          <div className="question-content">{question}</div>
+          <div className="question-content"> {question}</div>
           {isOpen ? (
             <Icon icon="ArrowUp" color="inherit" size={24} />
           ) : (
-            <Icon icon="ArrowDown" color="inherit" size={24} />
+            <div className=" w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M8 0H6V6H0V8H6V14H8V8H14V6H8V0Z"
+                  fill="white"
+                />
+              </svg>
+            </div>
           )}
         </div>
         <div className="px-3  py-4 text-[#878787] text-xl font-normal box-border">

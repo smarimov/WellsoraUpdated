@@ -8,14 +8,14 @@ interface Props {
 }
 export const TableActions = ({ onDelete, onEdit, onView }: Partial<Props>) => {
   return (
-    <div className="flex gap-2">
+    <div className="flex w-full gap-2">
       {onView != null && (
         <Button
           variant="outline"
           color="inherit"
           icon={<Icon icon="View" size={24} />}
           onClick={onView}
-          className="w-10 h-10 border-0 "
+          className="w-8 h-8 p-0 border-0"
         />
       )}
       {onEdit != null && (
@@ -24,7 +24,7 @@ export const TableActions = ({ onDelete, onEdit, onView }: Partial<Props>) => {
           color="inherit"
           icon={<Icon icon="PencilEdit02" color="inherit" size={24} />}
           onClick={onEdit}
-          className="w-10 h-10 border-0 "
+          className="w-8 h-8 p-0 border-0"
         />
       )}
       {onDelete != null && (
@@ -33,7 +33,7 @@ export const TableActions = ({ onDelete, onEdit, onView }: Partial<Props>) => {
           color="error"
           icon={<Icon icon="Delete02" color="inherit" size={24} />}
           onClick={onDelete}
-          className="w-10 h-10 border-0 "
+          className="w-8 h-8 p-0 border-0"
         />
       )}
     </div>

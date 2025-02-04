@@ -29,22 +29,22 @@ const DateList: React.FC<{ onDateSelect: (selectedDate: string) => void }> = ({
 }) => {
   const dates = generateMonthDates();
   const today = dayjs().date(); // Get current day (1 - 31)
-
-  // Set today's date as default
   const [selectedDate, setSelectedDate] = useState<number>(today);
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const selectedDateRef = useRef<HTMLDivElement | null>(null);
 
-  // Scroll to the selected date on mount
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
   useEffect(() => {
     if (selectedDateRef.current && scrollContainerRef.current) {
       const containerWidth = scrollContainerRef.current.offsetWidth; // Get container width
       const elementOffset = selectedDateRef.current.offsetLeft;
 
-      // Calculate a dynamic offset (center the selected date)
-      const offset = elementOffset - containerWidth * 0.7; // Adjust percentage if needed
-
+      // Center the selected date in view
+      const offset = elementOffset - containerWidth * 0.7;
       scrollContainerRef.current.scrollTo({
         left: offset,
         behavior: "smooth",
@@ -52,35 +52,60 @@ const DateList: React.FC<{ onDateSelect: (selectedDate: string) => void }> = ({
     }
   }, []);
 
+  // Handle mouse down event (start dragging)
+  const handleMouseDown = (event: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    isDragging.current = true;
+    startX.current = event.pageX - scrollContainerRef.current.offsetLeft;
+    scrollLeft.current = scrollContainerRef.current.scrollLeft;
+  };
+
+  // Handle mouse move event (scrolling)
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (!isDragging.current || !scrollContainerRef.current) return;
+    event.preventDefault();
+    const x = event.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.5; // Adjust scrolling speed
+    scrollContainerRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  // Handle mouse up event (stop dragging)
+  const handleMouseUp = () => {
+    isDragging.current = false;
+  };
+
   // Handle date selection
   const handleDateSelect = (day: number, isoDate: string) => {
     setSelectedDate(day);
-    onDateSelect(isoDate); // Send selected date outside of component
+    onDateSelect(isoDate);
   };
 
   return (
     <div
       ref={scrollContainerRef}
-      className="w-full max-w-[750px] py-4 mx-auto overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] overflow-y-hidden scroll-smooth"
+      className="py-5 flex gap-4 overflow-x-auto  [-ms-overflow-style:none] [scrollbar-width:none] overflow-y-hidden scroll-smooth"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseUp}
+      onMouseUp={handleMouseUp}
+      // style={{ border: "1px solid pink" }}
     >
-      <div className="flex gap-4 px-4">
-        {dates.map(({ day, dayOfWeek, original }) => (
-          <div
-            key={day}
-            ref={selectedDate === day ? selectedDateRef : null}
-            className={`flex font-bold border border-[#F0F0F0] shadow-custom flex-col items-center justify-center min-w-[60px] h-[60px] rounded-lg cursor-pointer transition-all 
+      {dates.map(({ day, dayOfWeek, original }) => (
+        <div
+          key={day}
+          ref={selectedDate === day ? selectedDateRef : null}
+          className={`flex font-bold border border-[#F0F0F0] shadow-custom flex-col items-center justify-center min-w-[70px] h-[70px] rounded-lg cursor-pointer transition-all 
               ${
                 selectedDate === day
-                  ? "bg-[#97c8dc] border-Purple-main font-bold shadow-none"
+                  ? "bg-Purple-main  font-bold shadow-none text-white"
                   : "text-black"
               }`}
-            onClick={() => handleDateSelect(day, original)}
-          >
-            <span className="text-xl">{day}</span>
-            <span className="text-sm">{dayOfWeek}</span>
-          </div>
-        ))}
-      </div>
+          onClick={() => handleDateSelect(day, original)}
+        >
+          <span className="text-2xl select-none">{day}</span>
+          <span className="text-xl select-none">{dayOfWeek}</span>
+        </div>
+      ))}
     </div>
   );
 };

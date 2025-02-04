@@ -38,7 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "px-[16px] py-[8px] rounded-[8px] flex items-center justify-center font-medium gap-[8px] cursor-pointer",
           fullWidth && "w-[100%]",
           `button-variant__${variant}-${color}`,
-          size === "md" ? "h-10" : "h-[36px] px-[14px] ",
+          size === "md" ? "h-11" : "h-[36px] px-[14px] ",
           wrap === "wrap" ? "text-wrap" : "text-nowrap",
           props.disabled && "bg-gray-400",
           props.className

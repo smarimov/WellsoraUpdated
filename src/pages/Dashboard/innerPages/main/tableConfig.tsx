@@ -14,7 +14,7 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
 
   {
     dataKey: "date",
-    label: "Scheduled Date",
+    label: "Scheduled date",
     render: (data) => (
       <>
         <p className="text-sm font-medium">
@@ -31,7 +31,7 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
     dataKey: "appointmentName",
     label: "Appointment",
     render: (data) => (
-      <div className="flex flex-col max-w-[230px] w-full">
+      <div className="flex flex-col min-w-[280px] ">
         <span className="text-base font-medium">{data.appointmentName}</span>
         <span className="text-sm text-[#B4BAC5] font-medium">
           {data.location}
@@ -42,7 +42,11 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
   {
     dataKey: "service",
     label: "Services",
-    render: (data) => <p className="text-base font-medium">{data.service}</p>,
+    render: (data) => (
+      <div className="max-w-[100px] w-full">
+        <p className="text-base font-medium ">{data.service}</p>
+      </div>
+    ),
   },
   {
     dataKey: "firstName",
@@ -51,9 +55,8 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
       <Label
         label={`${data.firstName} ${data.lastName}`}
         color={COLOR_DIF[data.status]}
-        outlined
         size="md"
-        className="w-fit"
+        className=" w-fit"
       />
     ),
   },

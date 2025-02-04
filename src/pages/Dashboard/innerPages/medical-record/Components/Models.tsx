@@ -30,14 +30,14 @@ export const ConnectionModel = ({ onSelect, onClose }: ModelProps) => (
         Cancel
       </Button>
     </div>
-    <div className="flex justify-center gap-10 mt-auto">
-      <div className="flex items-center gap-5">
+    <div className="flex justify-center gap-5 mt-auto">
+      <div className="flex items-center gap-1">
         <Icon icon="Secure" color="inherit" />
         <span className="text-[#2E02494D] text-lg font-medium">
           HIPAA Secure
         </span>
       </div>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-1">
         <Icon icon="Encrypted" color="inherit" />
         <span className="text-[#2E02494D] text-lg font-medium">Encrypted</span>
       </div>

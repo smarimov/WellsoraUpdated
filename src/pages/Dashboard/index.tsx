@@ -5,11 +5,9 @@ import { Outlet } from "react-router-dom";
 const Dashboard = () => {
   return (
     <PlanProvider>
-      <div>
-        <Sidebar />
-        <div className="ml-[300px] pt-[130px] relative ">
-          <Outlet />
-        </div>
+      <Sidebar />
+      <div className="ml-[300px]  pt-[130px] relative ">
+        <Outlet />
       </div>
     </PlanProvider>
   );

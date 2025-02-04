@@ -37,6 +37,7 @@ const Label = ({
       )}
     >
       {icon != null && <span className="flex items-center">{icon}</span>}
+      <div className="w-2 h-2 rounded-full "></div>
       <span className="text-xs text-green-900">
         {capitalizeFirstLetter(label)}
       </span>

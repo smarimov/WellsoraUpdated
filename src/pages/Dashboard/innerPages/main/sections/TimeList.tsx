@@ -1,6 +1,5 @@
+import { TStatus } from "@/context/PlanContext";
 import React, { useEffect, useRef } from "react";
-
-type TStatus = "pending" | "progress" | "success";
 
 export type Appointment = {
   time: string; // Example: "07:05 AM"
@@ -21,12 +20,12 @@ const generateTimeSlots = (): string[] => {
 
 const getStatusStyles = (status: TStatus) => {
   switch (status) {
-    case "pending":
-      return "bg-orange-100 text-Orange-main border-Orange-main";
+    case "new":
+      return "bg-red-100 text-red-500 border-red-500";
     case "progress":
-      return "bg-[#97c8dc] text-Purple-main border-Purple-main";
-    case "success":
-      return "bg-green-100 text-green-800 border-green-300";
+      return "bg-orange-100 text-orange-500 border-orange-500";
+    case "resolved":
+      return "bg-green-100 text-green-600 border-green-600";
     default:
       return "";
   }
@@ -64,7 +63,7 @@ const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
   return (
     <div
       ref={scrollContainerRef}
-      className="w-full max-w-[500px] [-ms-overflow-style:none] [scrollbar-width:none] max-h-[80vh] overflow-y-scroll overflow-x-hidden border border-[#F0F0F0] rounded-lg shadow-custom p-2"
+      className="w-[410px] h-[85vh] [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2"
     >
       {timeSlots.map((slotTime) => {
         const slotHour = parseHour(slotTime);

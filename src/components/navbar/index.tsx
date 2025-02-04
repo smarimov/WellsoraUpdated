@@ -28,7 +28,7 @@ const NavbarWrapper = ({
     <div className="px-[30px] top-0 z-[500] left-[300px] right-0 flex items-center  bg-white gap-4  h-[130px] shadow-custom box-border border-b border-b-[#F0F0F0] fixed ">
       <div className="flex flex-col mr-auto">
         <div className="flex items-center gap-3">
-          <p className="text-2xl font-bold text-[#0F1527]">{title} </p>
+          <p className="text-[38px] font-medium text-[#0F1527]">{title} </p>
 
           {isDashboard && (
             <div style={{ width: 50, height: 50 }}>
@@ -80,7 +80,7 @@ const NavbarWrapper = ({
         )}
       </div>
 
-      <div className="items-center hidden gap-2 xl:flex">{action}</div>
+      <>{action}</>
       <div
         className="flex items-center gap-4 "
         {...targetProps}
@@ -94,7 +94,7 @@ const NavbarWrapper = ({
         {!setting && (
           <>
             <div className="w-12 h-12 overflow-hidden rounded-[50%]">
-              <img src="./assets/profile.jpeg" />
+              <img src="/assets/profile.jpeg" />
             </div>
             <div className="flex flex-col ">
               <span className="text-xs font-semibold text-Navy-main">

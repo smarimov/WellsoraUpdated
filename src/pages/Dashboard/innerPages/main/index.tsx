@@ -25,7 +25,7 @@ const getUniquePatientCount = (appointments: TPlan[]): number => {
   return uniquePatients.size;
 };
 const getCompletedPlan = (appointments: TPlan[]): number => {
-  return appointments.filter((e) => e.status === "success").length;
+  return appointments.filter((e) => e.status === "resolved").length;
 };
 const getUpcomingAppointments = (appointments: TPlan[]): number => {
   const now = new Date();
@@ -42,10 +42,11 @@ const getUpcomingAppointments = (appointments: TPlan[]): number => {
 };
 
 const Main = () => {
-  const { plans, deletePlan, addPlan } = usePlan();
+  const { plans, deletePlan, addPlan, updatePlan } = usePlan();
   const [selectedDay, setSelected] = useState(formatCurrentDate());
   const [isOpen, setIsOpen] = useState(false);
   const [current, setCurrent] = useState("");
+  const [currentPlan, setCurrentPlan] = useState<TPlan | null>(null);
   const debouncedSetSearchTerm = useMemo(() => debounce(setCurrent, 300), []);
   const filteredData = useMemo((): TPlan[] => {
     return plans
@@ -74,59 +75,78 @@ const Main = () => {
   }, [plans, selectedDay]);
 
   const createAppointment = (data: Omit<TPlan, "id">) => {
-    addPlan(data);
+    if (currentPlan != null) {
+      updatePlan({ ...data, id: currentPlan.id });
+    } else {
+      addPlan(data);
+    }
     setIsOpen(false);
   };
   return (
     <>
       <NavbarWrapper
         title="Welcome back, Bernie"
-        subTitle="Thursday, Jan 4, 2022"
+        subTitle="Here's what's happening with your appointments today"
         action={
           <Button
             variant="contained"
             color="primary"
-            className="ml-auto text-nowrap h-[38px]"
+            size="md"
+            className=" max-w-[215px] w-full"
             onClick={() => setIsOpen(true)}
           >
-            Create New Appointment
+            Create new plan
           </Button>
         }
         isDashboard
       />
-      <div className="flex gap-3 p-4 min-w-[1200px] ">
-        <div className="w-full max-w-[1500px]">
-          <div className="flex flex-wrap gap-3 mb-5">
+      <div className="flex min-w-[1300px] overflow-x-auto h-full">
+        <div className="flex-1 min-w-0 p-4 py-5">
+          <DateList
+            onDateSelect={(val) => setSelected(formatAmericanDate(val))}
+          />
+
+          <div
+            className="flex flex-wrap gap-3 py-5 my-1"
+            // style={{ border: "1px solid red" }}
+          >
             <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
-              <p className="mb-2 text-lg font-bold">Total Appointments</p>
-              <span className="text-lg font-bold text-Purple-main">24</span>
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+                Total appointments
+              </p>
+              <span className="text-3xl font-bold ">{plans.length}</span>
             </div>
             <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
-              <p className="mb-2 text-lg font-bold">Upcoming Week</p>
-              <span className="text-lg font-bold text-Purple-main">
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+                Upcoming week
+              </p>
+              <span className="text-3xl font-bold ">
                 {getUpcomingAppointments(plans)}
               </span>
             </div>
             <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
-              <p className="mb-2 text-lg font-bold">Active Caregivers</p>
-              <span className="text-lg font-bold text-Purple-main">
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+                Active caregivers
+              </p>
+              <span className="text-3xl font-bold ">
                 {getUniquePatientCount(plans)}
               </span>
             </div>
             <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg flex-grow basis-full sm:basis-[46%] md:basis-[30%] lg:basis-[22%] h-[100px]">
-              <p className="mb-2 text-lg font-bold">Completed This Week</p>
-              <span className="text-lg font-bold text-Purple-main">
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+                Completed this week
+              </p>
+              <span className="text-3xl font-bold ">
                 {getCompletedPlan(plans)}
               </span>
             </div>
           </div>
-          <div>
-            <DateList
-              onDateSelect={(val) => setSelected(formatAmericanDate(val))}
-            />
-          </div>
-          <div className="flex justify-between gap-3 py-3 mb-2">
-            <p className="text-xl font-bold text-[#0F1527]">All Appointment</p>
+
+          <div
+            className="flex items-center justify-between gap-3 py-5 my-1 mb-2"
+            // style={{ border: "1px solid green" }}
+          >
+            <p className="text-xl font-bold text-[#0F1527]">All appointment</p>
             <Input
               leftSection={<Icon icon="Search1" color="inherit" />}
               placeholder="Search"
@@ -135,15 +155,17 @@ const Main = () => {
             />
           </div>
 
-          <div className="">
-            <Table
-              data={filteredData}
-              header={DASHBOARD_LIST()}
-              onEditAction={() => console.log("editing")}
-              onDeleteAction={(_, row) => deletePlan(row.id)}
-            />
-          </div>
+          <Table
+            data={filteredData}
+            header={DASHBOARD_LIST()}
+            onEditAction={(_, row) => {
+              setCurrentPlan(row);
+              setIsOpen(true);
+            }}
+            onDeleteAction={(_, row) => deletePlan(row.id)}
+          />
         </div>
+
         <TimeList appointments={appointmentByDay} />
       </div>
       <Modal
@@ -155,6 +177,7 @@ const Main = () => {
         <NewPlanForm
           onClose={() => setIsOpen(false)}
           sendingData={createAppointment}
+          currentPlan={currentPlan}
         />
       </Modal>
     </>

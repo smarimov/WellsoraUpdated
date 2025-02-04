@@ -23,8 +23,13 @@ export type AppointmentForm = {
 interface NewPlanFormProps {
   onClose: VoidFunction;
   sendingData: (data: Omit<TPlan, "id">) => void;
+  currentPlan: TPlan | null;
 }
-const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
+const NewPlanForm = ({
+  onClose,
+  sendingData,
+  currentPlan,
+}: NewPlanFormProps) => {
   const [options, setOptions] = useState<IOption[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -35,10 +40,10 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
       firstName: "",
       lastName: "",
       location: "",
-      status: "pending",
+      status: "new",
     },
   });
-  const { control, watch } = appointmentForm;
+  const { control, watch, setValue } = appointmentForm;
   const selectedStatus = watch("status");
 
   const onSubmit = (data: AppointmentForm) => {
@@ -105,24 +110,42 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
     );
   }, [isLoaded]);
 
+  useEffect(() => {
+    if (currentPlan != null) {
+      const dateTime = new Date(currentPlan.dateTime);
+      const formattedDate = dateTime.toISOString().split("T")[0];
+      const formattedTime = dateTime.toTimeString().slice(0, 5);
+      setValue("time", formattedTime);
+      setValue("date", formattedDate);
+      setValue("firstName", currentPlan.firstName);
+      setValue("lastName", currentPlan.lastName);
+      setValue("location", currentPlan.location);
+      setValue("appointmentName", currentPlan.appointmentName);
+      setValue("service", {
+        label: currentPlan.service,
+        value: currentPlan.service,
+      });
+      setValue("status", currentPlan.status);
+    }
+  }, [currentPlan, setValue]);
   return (
     <FormWrapper methods={appointmentForm} onSubmit={onSubmit}>
-      <div className="max-w-[500px] min-h-[600px] p-5 px-0 flex flex-col  mx-auto gap-5">
+      <div className="max-w-[500px] min-h-[600px] p-10 px-0 flex flex-col  mx-auto gap-6">
         <p className="text-2xl font-bold text-[#0F1527] text-center">
-          Create New Appointment Form
+          Create new appointment form
         </p>
         <div className="flex gap-3">
           <Input.Form
             control={control}
             name="firstName"
-            placeholder="First Name"
+            placeholder="First name"
             className="w-full"
             required
           />
           <Input.Form
             control={control}
             name="lastName"
-            placeholder="Last Name"
+            placeholder="Last name"
             className="w-full"
             required
           />
@@ -130,7 +153,7 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
         <Input.Form
           control={control}
           name="appointmentName"
-          placeholder="Appointment Name (Eg. dental cleaning, heart surgery)"
+          placeholder="Appointment name (Eg. dental cleaning, heart surgery)"
           className="w-full"
           required
         />
@@ -141,9 +164,9 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
             <div className="flex gap-3">
               <Button
                 color="primary"
-                variant={selectedStatus === "pending" ? "contained" : "outline"}
+                variant={selectedStatus === "new" ? "contained" : "outline"}
                 className="w-full"
-                onClick={() => field.onChange("pending")}
+                onClick={() => field.onChange("new")}
               >
                 New
               </Button>
@@ -155,13 +178,15 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
                 className="w-full"
                 onClick={() => field.onChange("progress")}
               >
-                In Progress
+                In progress
               </Button>
               <Button
                 color="primary"
-                variant={selectedStatus === "success" ? "contained" : "outline"}
+                variant={
+                  selectedStatus === "resolved" ? "contained" : "outline"
+                }
                 className="w-full"
-                onClick={() => field.onChange("success")}
+                onClick={() => field.onChange("resolved")}
               >
                 Resolved
               </Button>
@@ -173,7 +198,7 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
           control={control}
           required
           name="location"
-          placeholder="Select Location..."
+          placeholder="Select location..."
           onOpen={fetchGoogleMapsLocations}
           options={options}
         />
@@ -201,15 +226,15 @@ const NewPlanForm = ({ onClose, sendingData }: NewPlanFormProps) => {
           control={control}
           required
           name="service"
-          placeholder="Select Service..."
+          placeholder="Select service..."
           options={[
             { label: "Transport", value: "Transport" },
             { label: "Support", value: "Support" },
-            { label: "Post Visit", value: "Post Visit" },
-            { label: "Physical Assistance", value: "Physical Assistance" },
+            { label: "Post visit", value: "Post visit" },
+            { label: "Physical assistance", value: "Physical assistance" },
             {
-              label: "Health Monitor",
-              value: "Health Monitor",
+              label: "Health monitor",
+              value: "Health monitor",
             },
           ]}
         />

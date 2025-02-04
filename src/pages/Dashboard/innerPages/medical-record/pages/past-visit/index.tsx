@@ -79,7 +79,7 @@ const PastVisit = () => {
   return (
     <>
       <div>
-        <p className="text-2xl font-bold text-[#0F1527]">Past Visits</p>
+        <p className="text-2xl font-bold text-[#0F1527]">Past visits</p>
 
         <span className="text-base font-normal text-[#AEAEAE] ">
           Your recent medical appointments

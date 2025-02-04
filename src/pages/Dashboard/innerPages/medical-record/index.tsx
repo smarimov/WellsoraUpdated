@@ -16,7 +16,7 @@ import { usePlan } from "@/context/PlanContext";
 import { Loading } from "@/components/Loading";
 const TAB_LIST = [
   {
-    label: "Past Visits",
+    label: "Past visits",
     value: "past-visit",
     icon: "loc",
     path: "past-visit",
@@ -28,7 +28,7 @@ const TAB_LIST = [
     path: "medications",
   },
   { label: "Allergies", value: "allergies", icon: "alergy", path: "allergies" },
-  { label: "Care Team", value: "care-team", icon: "doctor", path: "care-team" },
+  { label: "Care team", value: "care-team", icon: "doctor", path: "care-team" },
   {
     label: "Conditions",
     value: "conditions",
@@ -87,22 +87,21 @@ const MedicalRecord = () => {
   return (
     <>
       <NavbarWrapper
-        title="Medical Records"
+        title="Medical records"
         subTitle="All your health records, one secure connection"
         action={
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              className="mr-6 text-nowrap"
-              onClick={() => setIsOpen(true)}
-            >
-              Connect Medical Records
-            </Button>
-          </>
+          <Button
+            variant="contained"
+            color="primary"
+            size="md"
+            className=" max-w-[215px] w-full"
+            onClick={() => setIsOpen(true)}
+          >
+            Connect records
+          </Button>
         }
       />
-      <div className="p-5 max-w-[1500px]  ">
+      <div className="p-5 max-w-[1500px]  mx-auto">
         <div className="overflow-hidden bg-white rounded-2xl shadow-custom border border-[#F0F0F0] h-full">
           <TabWithPath tabs={TAB_LIST} />
           <div className="min-h-[500px] p-5">

@@ -10,8 +10,9 @@ import { benefitFromAPi } from "@/raw";
 import Cookies from "js-cookie";
 import axios from "axios";
 
-const BENEFIT_SEARCH_URL = 'https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search'; // Replace with your API URL
-const AUTH_TOKEN = Cookies.get("wellsora_token");; // Replace with your actual token
+const BENEFIT_SEARCH_URL =
+  "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search"; // Replace with your API URL
+const AUTH_TOKEN = Cookies.get("wellsora_token"); // Replace with your actual token
 
 interface Benefit {
   benefitCost: {
@@ -77,13 +78,13 @@ const Benefits = () => {
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${AUTH_TOKEN}`,
           },
         }
       );
-  
-      console.log('Response:', response.data);
+
+      console.log("Response:", response.data);
       setMessage(response.data.choices[0].message.content);
     } catch (error: any) {
       switch (error.response.status) {
@@ -91,7 +92,10 @@ const Benefits = () => {
           alert("Unauthorized. Please login and try again.");
           break;
         default:
-          console.error('Error:', error.response ? error.response.data : error.message);
+          console.error(
+            "Error:",
+            error.response ? error.response.data : error.message
+          );
           break;
       }
       setMessage("Something went wrong. Please try again later.");
@@ -107,7 +111,7 @@ const Benefits = () => {
       setMessage("Loading...");
       benefitsSearch();
     }
-  }
+  };
 
   const closeAndResetModel = () => {
     setIsOpen(false);
@@ -155,26 +159,37 @@ const Benefits = () => {
           <Button
             variant="contained"
             color="primary"
-            className="ml-auto mr-6 text-nowrap"
+            size="md"
+            className=" max-w-[215px] w-full"
             onClick={() => setIsOpen(true)}
           >
             Connect Insurance
           </Button>
         }
       />
-      <div className="p-5 h-full max-w-[1500px]">
-        <div className="flex items-center gap-10">
+      <div className="p-5 h-full mx-auto max-w-[1500px]">
+        <div className="flex p-3 shadow-custom h-[60px] items-center gap-3 mb-3 border border-[#F0F0F0] rounded-lg">
           <Input
             placeholder="Search procedures, treatments or services...."
-            wrapperClass=" h-[56px]"
-            className="w-full"
+            className="w-full "
+            wrapperClass="border-none"
+            // rightSection={<Icon icon="Search1" color="#9E9E9E" />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Button className=" text-nowrap h-[56px]" onClick={handleBenefitSearch}>Search Benefits</Button>
+          <Button
+            className=" text-nowrap h-[56px]"
+            onClick={handleBenefitSearch}
+          >
+            Search Benefits
+          </Button>
         </div>
+
         <div className="px-[30px] py-5 bg-[#EFF8FC] my-4">
-          <div className="text-lg italic font-normal text-[#9E9E9E]"> {message} </div>
+          <div className="text-lg italic font-normal text-[#9E9E9E]">
+            {" "}
+            {message}{" "}
+          </div>
         </div>
         <Collapse accordianData={accordionData} />
       </div>
