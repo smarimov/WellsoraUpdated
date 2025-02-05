@@ -85,7 +85,7 @@ const Main = () => {
   return (
     <>
       <NavbarWrapper
-        title="Welcome back, Bernie"
+        title="Welcome, Bernie"
         subTitle="Here's what's happening with your appointments today"
         action={
           <Button
@@ -106,14 +106,14 @@ const Main = () => {
             onDateSelect={(val) => setSelected(formatAmericanDate(val))}
           />
 
-          <div className="flex flex-wrap justify-between gap-3 py-5 my-1">
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  max-w-[200px] w-full  h-[100px]">
+          <div className="flex flex-wrap justify-between gap-1 py-5 my-1">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  max-w-[211px] w-full  h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Total appointments
               </p>
               <span className="text-3xl font-bold ">{plans.length}</span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[200px] w-full h-[100px]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[211px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Upcoming week
               </p>
@@ -121,7 +121,7 @@ const Main = () => {
                 {getUpcomingAppointments(plans)}
               </span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[200px] w-full h-[100px]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[211px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Active caregivers
               </p>
@@ -129,7 +129,7 @@ const Main = () => {
                 {getUniquePatientCount(plans)}
               </span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[200px] w-full h-[100px]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[210px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
                 Completed this week
               </p>

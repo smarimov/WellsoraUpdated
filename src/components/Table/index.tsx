@@ -101,7 +101,7 @@ export const Table = <T extends object>(props: ITableProps<T>) => {
             <th
               key={index}
               className={clsx(
-                "custom-table__head-cell",
+                "custom-table__head-cell ",
                 // dataKey.startsWith("action") && "!text-right",
                 className
               )}

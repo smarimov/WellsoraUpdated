@@ -72,9 +72,32 @@ export const ProviderModel = ({ onSelect, onClose }: ModelProps) => {
           placeholder="Search Hospitals"
           value={selected}
           options={[
-            { label: "Mayo Clinic", value: "1" },
+            { label: "Penn Medicine", value: "1" },
             { label: "Cleveland Clinic", value: "2" },
-            { label: "Johns Hopkins Hospital", value: "3" },
+            { label: "Johns Hopkins Medicine", value: "3" },
+            { label: "Mayo Clinic", value: "4" },
+            { label: "Stanford Health Care", value: "5" },
+            { label: "Stanford Health Care", value: "6" },
+            { label: "Duke Health", value: "7" },
+            { label: "Massachusetts General Hospital", value: "8" },
+            { label: "UPMC", value: "9" },
+            { label: "Northwestern Medicine", value: "10" },
+            { label: "Mount Sinai Health System", value: "11" },
+            { label: "UC San Diego Health", value: "12" },
+            { label: "Jefferson Health", value: "13" },
+            { label: "Temple Health", value: "14" },
+            { label: "Main Line Health", value: "15" },
+            {
+              label: "Children's Hospital of Philadelphia (CHOP)",
+              value: "16",
+            },
+            { label: "Tower Health", value: "17" },
+            { label: "Yale New Haven Health", value: "18" },
+            {
+              label: "Michigan Medicine (University of Michigan)",
+              value: "19",
+            },
+            { label: "Barnes-Jewish Hospital/BJC HealthCare", value: "20" },
           ]}
           onSelect={(val) => {
             setSelected(val as IOption);

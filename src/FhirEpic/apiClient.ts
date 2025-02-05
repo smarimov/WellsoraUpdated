@@ -1,6 +1,5 @@
 import axios from "axios";
 import { refreshAccessToken } from "./oauthHelpers";
-// import { refreshAccessToken } from "./oauthHelpers";
 
 const apiClient = axios.create({
   baseURL: "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4",
@@ -19,7 +18,9 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response.status === 401) {
       try {
-        await refreshAccessToken();
+        const x = await refreshAccessToken();
+        console.log("xatolik", x);
+
         return apiClient.request(error.config);
       } catch (refreshError) {
         console.error("Unable to refresh token:", refreshError);

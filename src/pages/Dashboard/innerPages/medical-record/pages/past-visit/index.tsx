@@ -1,9 +1,11 @@
 import { Button } from "@/components/Button";
 import { Modal } from "@/components/Modal";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiClient } from "@/FhirEpic/apiClient";
 import { recordData } from "@/raw";
 import { usePlan } from "@/context/PlanContext";
+import { FHIRBundle } from "@/types/encounter";
+import { Loading } from "@/components/Loading";
 
 const example = {
   date: "Jun 06, 2023",
@@ -29,30 +31,38 @@ type TCurrentVisit = {
   date: string;
 };
 const PastVisit = () => {
-  const { recordConnection } = usePlan();
+  // const { recordConnection } = usePlan();
+  const [isLoading, setIsLoading] = useState(false);
   const [isVisit, setIsVisit] = useState(false);
   const [currentVisit, setCurrentVisit] = useState<TCurrentVisit | null>(null);
+  const [recorded, setRecorded] = useState<FHIRBundle | null>(null);
   const closeAndResetVisit = () => {
     setIsVisit(false);
     setCurrentVisit(null);
   };
-  const fetchEncounterData = async () => {
+  const fetchEncounterData = async (): Promise<void> => {
     try {
-      const patientId = sessionStorage.getItem("patientId");
-      const response = await apiClient.get(
-        `/Encounter?patient=erXuFYUfucBZaryVksYEcMg3`
-      );
-      console.log("result in visit ", response.data);
+      const patientId: string | null = sessionStorage.getItem("patientId");
+      if (!patientId) {
+        return;
+      }
+      setIsLoading(true);
+      const response = await apiClient.get(`/Encounter?patient=${patientId}`);
+      setRecorded(response.data as FHIRBundle);
+      setIsLoading(false);
+      console.log("Result in visit:", response.data);
     } catch (error) {
+      setIsLoading(false);
       console.error("Error fetching patient data:", error);
     }
   };
 
-  const pastVisitData = useMemo((): TPastVisit[] => {
-    return recordData.entry
+  const pastVisitFormatedList = useMemo((): TPastVisit[] => {
+    if (!recordData || !recorded?.entry) return [];
+    return recorded?.entry
       .filter((visit) => visit.resource.resourceType === "Encounter")
       .map((visit) => ({
-        date: visit.resource.period?.start
+        date: visit?.resource?.period?.start
           ? new Date(
               visit.resource.period.start.split("T")[0]
             ).toLocaleDateString("en-US", {
@@ -67,15 +77,15 @@ const PastVisit = () => {
         description: visit.resource.type?.[0]?.text || "NA",
         role: visit.resource.participant?.[0]?.individual?.type || "NA",
       }));
-  }, [recordData.entry]);
+  }, [recorded?.entry]);
 
   const handleVisitModal = (current: TCurrentVisit) => {
     setCurrentVisit(current);
     setIsVisit(true);
   };
-  // useEffect(() => {
-  //   fetchEncounterData();
-  // }, []);
+  useEffect(() => {
+    fetchEncounterData();
+  }, []);
   return (
     <>
       <div>
@@ -86,8 +96,14 @@ const PastVisit = () => {
         </span>
 
         <div className="flex flex-col gap-5 mt-6 max-h-[590px] overflow-auto">
-          {recordConnection &&
-            pastVisitData.map((visit, index) => (
+          {isLoading && (
+            <Loading
+              text="Loading..."
+              className="flex flex-col items-center w-full "
+            />
+          )}
+          {recorded != null &&
+            pastVisitFormatedList.map((visit, index) => (
               <div
                 key={index}
                 className="p-5 border border-[#F0F0F0] shadow-custom rounded-lg flex items-center gap-2 "

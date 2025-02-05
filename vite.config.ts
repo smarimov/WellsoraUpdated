@@ -9,9 +9,9 @@ import svgr from "vite-plugin-svgr";
 // })
 export default defineConfig({
   plugins: [react(), svgr()],
-  // server: {
-  //   port: 3000,
-  // },
+  server: {
+    port: 3000,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

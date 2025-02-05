@@ -1,4 +1,4 @@
-import { Autocomplete } from "@/components/Autocomplete";
+import { Autocomplete as autocompolete } from "@/components/Autocomplete";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Form";
 import { FormWrapper } from "@/components/Form/FormWrapper";
@@ -6,6 +6,7 @@ import { TPlan, TStatus } from "@/context/PlanContext";
 import { IOption } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import Autocomplete from "react-google-autocomplete";
 
 export type AppointmentForm = {
   appointmentName: string;
@@ -43,17 +44,15 @@ const NewPlanForm = ({
       status: "new",
     },
   });
-  const { control, watch, setValue } = appointmentForm;
+  const { control, watch, setValue, reset } = appointmentForm;
   const selectedStatus = watch("status");
 
   const onSubmit = (data: AppointmentForm) => {
     const { service, date, time, ...rest } = data;
 
-    // if (!date || !time) {
-    //   alert("Please select both date and time.");
-    //   return;
-    // }
-
+    if (!date || !time) {
+      return;
+    }
     // Create ISO dateTime format
     const dateTime = new Date(`${date}T${time}:00`).toISOString();
 
@@ -72,43 +71,6 @@ const NewPlanForm = ({
   //     setIsLoaded(true);
   //   });
   // }, []);
-
-  const fetchGoogleMapsLocations = useCallback(() => {
-    if (!isLoaded || !(window as any).google) {
-      console.error("Google Maps API not loaded");
-      return;
-    }
-
-    const google = window.google;
-
-    const service = new google.maps.places.AutocompleteService();
-
-    service.getPlacePredictions(
-      {
-        input: "",
-        types: ["geocode"],
-        componentRestrictions: { country: "US" },
-      },
-      (
-        predictions: google.maps.places.AutocompletePrediction[] | null,
-        status: google.maps.places.PlacesServiceStatus
-      ) => {
-        if (
-          status === google.maps.places.PlacesServiceStatus.OK &&
-          predictions
-        ) {
-          const newOptions = predictions.map((place) => ({
-            label: place.description,
-            value: place.place_id, // Store place_id for fetching details later
-          }));
-          setOptions(newOptions);
-        } else {
-          console.warn("No locations found");
-          setOptions([]);
-        }
-      }
-    );
-  }, [isLoaded]);
 
   useEffect(() => {
     if (currentPlan != null) {
@@ -130,10 +92,7 @@ const NewPlanForm = ({
   }, [currentPlan, setValue]);
   return (
     <FormWrapper methods={appointmentForm} onSubmit={onSubmit}>
-      <div className="max-w-[500px] min-h-[600px] p-10 px-0 flex flex-col  mx-auto gap-6">
-        <p className="text-2xl font-bold text-[#0F1527] text-center">
-          Create new appointment form
-        </p>
+      <div className="max-w-[500px] min-h-[550px] p-10 px-0 flex flex-col  mx-auto gap-6">
         <div className="flex gap-3">
           <Input.Form
             control={control}
@@ -193,16 +152,26 @@ const NewPlanForm = ({
             </div>
           )}
         />
-
-        <Autocomplete.Form
+        {/* <Autocomplete.Form
           control={control}
           required
           name="location"
           placeholder="Select location..."
           onOpen={fetchGoogleMapsLocations}
           options={options}
+        /> */}
+        <Autocomplete
+          apiKey="AIzaSyAw3cYpdPTYMQ1iLd85W2PeZu-zHz72gMM"
+          style={{ width: "90%" }}
+          onPlaceSelected={(place) => {
+            console.log(place);
+          }}
+          options={{
+            types: ["(regions)"],
+            componentRestrictions: { country: "ru" },
+          }}
+          defaultValue="Amsterdam"
         />
-
         <div className="flex gap-3">
           <Input.Form
             control={control}
@@ -222,7 +191,7 @@ const NewPlanForm = ({
             required
           />
         </div>
-        <Autocomplete.Form
+        <autocompolete.Form
           control={control}
           required
           name="service"
@@ -238,13 +207,15 @@ const NewPlanForm = ({
             },
           ]}
         />
-
         <div className="flex items-end justify-end flex-1 gap-3">
           <Button
             color="primary"
             variant="outline"
             className="w-full max-w-[170px] "
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              reset();
+            }}
           >
             Cancel
           </Button>

@@ -139,10 +139,8 @@ const CareGiver = () => {
   return (
     <>
       <NavbarWrapper
-        // title="Welcome back, Gandi"
-        // subTitle="Thursday, Jan 4, 2022"
-        title="Find the Perfect Caregiver"
-        subTitle="Answer the following questions and get your perfect caregiver"
+        title="Find a caregiver"
+        subTitle="Connecting you with trusted caregivers"
       />
       <div className="p-6 max-w-[1200px] mx-auto ">
         {/* {JSON.stringify(Object.keys(selectedOptions).length)} */}
@@ -178,7 +176,7 @@ const CareGiver = () => {
         </div>
       </div>
       <Modal
-        contentClass="max-w-[500px] w-full  flex"
+        contentClass="max-w-[550px] w-full  flex"
         show={isOpen}
         onClose={() => setIsOpen(false)}
         titlebarClass="hidden"
@@ -188,34 +186,34 @@ const CareGiver = () => {
             <div className="w-10 mx-auto h-9">
               <img src="./assets/Logo.png" alt="" />
             </div>
-            <p className="text-xl font-bold text-center ">
+            <p className="text-2xl font-bold text-center ">
               Thank You for Your Request
             </p>
-            <span className="text-lg font-medium text-[#2E02494D] block text-center">
+            <span className="text-xl font-medium text-[#2E02494D] block text-center">
               We've received your care preferences
             </span>
           </div>
           <div className="p-4 border rounded-lg border-[#F0F0F0] bg-white shadow-custom ">
-            <p className="mb-1 text-base font-bold text-center">
+            <p className="mb-1 text-xl font-bold text-center">
               Your Care Request Summary
             </p>
 
             {Object.keys(selectedOptions).map((item) => (
-              <div className="flex flex-col pb-1 mb-3 border-b last:border-b-0">
-                <span className="text-sm text-[#AEAEAE] font-medium">
+              <div className="flex flex-col pb-1 mb-4 border-b last:border-b-0">
+                <span className="text-lg text-[#AEAEAE] font-medium">
                   {item}
                 </span>
-                <span className="text-sm font-semibold">
+                <span className="text-lg font-semibold">
                   {selectedOptions[item]}
                 </span>
               </div>
             ))}
           </div>
           <div>
-            <p className="mb-1 text-sm font-medium text-center">
+            <p className="mb-1 text-lg font-medium text-center">
               We'll contact you within 24 hours
             </p>
-            <span className="text-sm text-center text-[#AEAEAE] font-medium block mb-2">
+            <span className="text-lg text-center text-[#AEAEAE] font-medium block mb-2">
               Need immediate assistance? Call us at (555) 123-4567
             </span>
           </div>
@@ -251,14 +249,14 @@ const StepCard = ({
       <span className="text-lg font-medium text-[#AEAEAE] text-center block mb-4">
         {step.subTitle}
       </span>
-      <div className="flex flex-col gap-2 h-[600px]  overflow-auto">
+      <div className="flex flex-col gap-4 h-[600px]  overflow-auto">
         {step.options.map((option) => (
           <div
             key={option.id}
             className={clsx(
               "border flex items-center gap-3  rounded-lg  bg-white p-5 cursor-pointer hover:bg-[#EFF8FC] shadow-custom",
               selectedOption === option.label
-                ? "border-Purple-main bg-[#EFF8FC]"
+                ? "border-Purple-main !bg-[#EFF8FC]"
                 : "border-[#F0F0F0]"
             )}
             onClick={() => onSelectOption(option.label)}

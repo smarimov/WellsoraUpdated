@@ -1,7 +1,22 @@
 import axios from "axios";
 import { oauthConfig } from "./oauthConfig";
 
-const generateRandomString = (length = 16) => {
+interface OAuthConfig {
+  clientId: string;
+  redirectUri: string;
+  authorizeUrl: string;
+  tokenUrl: string;
+  scope: string;
+  audience?: string;
+}
+
+interface Tokens {
+  access_token: string;
+  refresh_token?: string;
+  patient?: string;
+}
+
+const generateRandomString = (length: number = 16): string => {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   return Array.from({ length }, () =>
@@ -9,7 +24,7 @@ const generateRandomString = (length = 16) => {
   ).join("");
 };
 
-export const generatePKCECodes = async () => {
+export const generatePKCECodes = async (): Promise<string> => {
   const codeVerifier = generateRandomString();
   const encoder = new TextEncoder();
   const data = encoder.encode(codeVerifier);
@@ -37,9 +52,9 @@ export const generatePKCECodes = async () => {
   return codeChallenge;
 };
 
-export const getAuthorizationUrl = async () => {
-  const { clientId, redirectUri, authorizeUrl, scope, audience } = oauthConfig;
-  // console.log(`pkce code before: ${codeChallenge}`)
+export const getAuthorizationUrl = async (): Promise<string> => {
+  const { clientId, redirectUri, authorizeUrl, scope, audience } =
+    oauthConfig as OAuthConfig;
   const codeChallenge = await generatePKCECodes();
   console.log(`pkce code after: ${codeChallenge}`);
 
@@ -49,7 +64,7 @@ export const getAuthorizationUrl = async () => {
     redirect_uri: redirectUri,
     scope,
     state: generateRandomString(),
-    aud: audience,
+    aud: audience || "",
     // code_challenge: codeChallenge,
     // code_challenge_method: "S256",
   });
@@ -57,12 +72,12 @@ export const getAuthorizationUrl = async () => {
   return `${authorizeUrl}?${params.toString()}`;
 };
 
-export const redirectToLogin = async () => {
+export const redirectToLogin = async (): Promise<void> => {
   window.location.href = await getAuthorizationUrl();
 };
 
-export const exchangeCodeForToken = async (code: any) => {
-  const { tokenUrl, clientId, redirectUri } = oauthConfig;
+export const exchangeCodeForToken = async (code: string): Promise<Tokens> => {
+  const { tokenUrl, clientId, redirectUri } = oauthConfig as OAuthConfig;
   const codeVerifier = sessionStorage.getItem("pkce_code_verifier");
   console.log(`code verifier after redirect: ${codeVerifier}`);
 
@@ -71,7 +86,7 @@ export const exchangeCodeForToken = async (code: any) => {
     code,
     redirect_uri: redirectUri,
     client_id: clientId,
-    // code_verifier: codeVerifier,
+    // code_verifier: codeVerifier || "",
   });
 
   console.log(`Token URL: ${tokenUrl}`);
@@ -83,11 +98,12 @@ export const exchangeCodeForToken = async (code: any) => {
     },
   });
 
-  return response.data;
+  return response.data as Tokens;
 };
 
-export const setTokens = (tokens: any) => {
-  sessionStorage.setItem("patientId", tokens.patient);
+export const setTokens = (tokens: Tokens): void => {
+  console.log("Token keldi: ", tokens);
+  sessionStorage.setItem("patientId", tokens.patient || "");
   sessionStorage.setItem("access_token", tokens.access_token);
   if (tokens.refresh_token) {
     sessionStorage.setItem("refresh_token", tokens.refresh_token);
@@ -97,9 +113,8 @@ export const setTokens = (tokens: any) => {
 /**
  * Refresh the access token using the refresh token.
  */
-export const refreshAccessToken = async () => {
-  const { tokenUrl, clientId } = oauthConfig;
-  console.log("what is ", tokenUrl, clientId);
+export const refreshAccessToken = async (): Promise<string> => {
+  const { tokenUrl, clientId } = oauthConfig as OAuthConfig;
   const refreshToken = sessionStorage.getItem("refresh_token");
 
   if (!refreshToken) {
@@ -118,7 +133,7 @@ export const refreshAccessToken = async () => {
     },
   });
 
-  const { access_token, refresh_token } = response.data;
+  const { access_token, refresh_token } = response.data as Tokens;
 
   // Store the new access token and refresh token
   sessionStorage.setItem("access_token", access_token);
@@ -132,14 +147,14 @@ export const refreshAccessToken = async () => {
 /**
  * Retrieves the access token from secure storage.
  */
-export const getAccessToken = () => {
+export const getAccessToken = (): string | null => {
   return sessionStorage.getItem("access_token");
 };
 
 /**
  * Clears all stored tokens (useful for logout).
  */
-export const clearTokens = () => {
+export const clearTokens = (): void => {
   sessionStorage.removeItem("access_token");
   sessionStorage.removeItem("refresh_token");
   sessionStorage.removeItem("pkce_code_verifier");

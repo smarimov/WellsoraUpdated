@@ -15,8 +15,11 @@ const LoginPage = () => {
         <Login />
       </div>
       <div className="items-center justify-center flex-1 hidden p-5 lg:flex bg-Purple-main ">
-        <div className="max-w-[600px] w-full max-h-[186px] h-full">
-          <img src="../assets/wellsora-bg.png" style={{ objectFit: "cover" }} />
+        <div className="max-w-[600px] w-full max-h-[186px] h-full flex justify-center items-center">
+          {/* <img src="../assets/wellsora-bg.png" style={{ objectFit: "cover" }} /> */}
+          <h1 className="font-extrabold text-[72px] text-white text-center">
+            Wellsora Health
+          </h1>
         </div>
       </div>
     </div>
@@ -64,6 +67,43 @@ const Register = () => {
 
 const Login = () => {
   const navigate = useNavigate();
+  // const handleLogin = async (
+  //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  // ) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     // Make POST request to the login API
+  //     const response = await axios.post(
+  //       "https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/login",
+  //       {
+  //         email: "john.doe@example.com",
+  //         password: "StrongPassword123",
+  //       }
+  //     );
+
+  //     console.log("Protected Data:", response.data);
+  //     const { token, expiresIn } = response.data;
+  //     console.log(typeof expiresIn, expiresIn);
+
+  //     // Calculate cookie expiry in milliseconds
+  //     const cookieExpiry = expiresIn / (24 * 60 * 60);
+
+  //     // Set the token in the cookie
+  //     Cookies.set("wellsora_token", token, {
+  //       secure: false,
+  //       expires: cookieExpiry, // Token expiration time in milliseconds
+  //     });
+
+  //     console.log("Cookie set successfully, Logged in successfully:");
+
+  //     // Redirect to Dashboard after successful login
+  //     navigate("/");
+  //   } catch (error) {
+  //     // Handle network or other errors
+  //     // setError("An error occurred. Please try again later.");
+  //   }
+  // };
   const handleLogin = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {

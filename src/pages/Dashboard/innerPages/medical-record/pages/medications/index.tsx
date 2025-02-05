@@ -1,66 +1,13 @@
 import { Button } from "@/components/Button";
 import { Modal } from "@/components/Modal";
-import { useMemo, useState } from "react";
-import { usePlan } from "@/context/PlanContext";
+import { useEffect, useMemo, useState } from "react";
+import { apiClient } from "@/FhirEpic/apiClient";
+import {
+  MedicationRequestBundle,
+  MedicationRequestEntry,
+} from "@/types/medication";
+import { Loading } from "@/components/Loading";
 
-const recordData = {
-  entry: [
-    {
-      resource: {
-        resourceType: "MedicationRequest",
-        medicationReference: {
-          display: "drospirenone-ethinyl estradio 3-0.02 MG per tablet",
-        },
-        authoredOn: "2023-06-06T12:00:00Z",
-      },
-    },
-    {
-      resource: {
-        resourceType: "MedicationRequest",
-        medicationReference: {
-          display: "Atorvastatin 20 MG Oral Tablet",
-        },
-        authoredOn: "2023-05-15T09:30:00Z",
-      },
-    },
-    {
-      resource: {
-        resourceType: "MedicationRequest",
-        medicationReference: {
-          display: "Lisinopril 10 MG Oral Tablet",
-        },
-        authoredOn: "2023-04-20T14:15:00Z",
-      },
-    },
-    {
-      resource: {
-        resourceType: "MedicationRequest",
-        medicationReference: {
-          display: "Metformin 500 MG Oral Tablet",
-        },
-        authoredOn: "2023-07-10T08:45:00Z",
-      },
-    },
-    {
-      resource: {
-        resourceType: "MedicationRequest",
-        medicationReference: {
-          display: "Amoxicillin 500 MG Capsule",
-        },
-        authoredOn: "2023-08-22T16:20:00Z",
-      },
-    },
-    {
-      resource: {
-        resourceType: "MedicationRequest",
-        medicationReference: {
-          display: "Ibuprofen 200 MG Tablet",
-        },
-        authoredOn: "2023-09-05T11:10:00Z",
-      },
-    },
-  ],
-};
 type TMedication = {
   category: string;
   description: string;
@@ -69,34 +16,65 @@ type TMedication = {
   // department: string;
 };
 const Medications = () => {
-  const { recordConnection } = usePlan();
+  // const { recordConnection } = usePlan();
+  const [medicationList, setMedicationList] =
+    useState<MedicationRequestBundle | null>(null);
   const [currentMedication, setCurrentMedication] =
     useState<TMedication | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isInformation, setIsInformation] = useState(false);
   const closeAndResetInformationModal = () => {
     setIsInformation(false);
     setCurrentMedication(null);
   };
-
-  const medicationDataList = useMemo((): TMedication[] => {
-    return recordData.entry
-      .filter((med) => med.resource.resourceType === "MedicationRequest")
+  const fetchMedicationsData = async () => {
+    try {
+      const patientId: string | null = sessionStorage.getItem("patientId");
+      if (!patientId) {
+        return;
+      }
+      setIsLoading(true);
+      const response = await apiClient.get(
+        `/MedicationRequest?patient=${patientId}&status=active`
+      );
+      setMedicationList(response.data as MedicationRequestBundle);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error fetching patient data:", error);
+    }
+  };
+  const medicationFormatedList = useMemo((): TMedication[] => {
+    if (!medicationList || !medicationList.entry) return [];
+    return medicationList.entry
+      .filter(
+        (med): med is MedicationRequestEntry =>
+          med.resource.resourceType === "MedicationRequest"
+      )
       .map((med) => ({
         category: med.resource.resourceType,
-        description: med.resource.medicationReference?.display || "NA",
-        date: med.resource?.authoredOn
-          ? new Date(med.resource.authoredOn).toLocaleDateString("en-US", {
-              month: "short",
-              day: "2-digit",
-              year: "numeric",
-            })
-          : "NA",
+        description:
+          (med.resource.resourceType === "MedicationRequest" &&
+            med.resource.medicationReference.display) ||
+          "NA",
+        date:
+          med.resource.resourceType === "MedicationRequest" &&
+          med.resource?.authoredOn
+            ? new Date(med.resource.authoredOn).toLocaleDateString("en-US", {
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+              })
+            : "NA",
       }));
-  }, [recordData.entry]);
+  }, [medicationList?.entry]);
   const handleMedicationModel = (val: TMedication) => {
     setCurrentMedication(val);
     setIsInformation(true);
   };
+  useEffect(() => {
+    fetchMedicationsData();
+  }, []);
   return (
     <>
       <div>
@@ -107,8 +85,14 @@ const Medications = () => {
         </span>
 
         <div className="flex flex-col gap-5 mt-6 max-h-[590px] overflow-auto">
-          {recordConnection &&
-            medicationDataList.map((item, index) => (
+          {isLoading && (
+            <Loading
+              text="Loading..."
+              className="flex flex-col items-center w-full "
+            />
+          )}
+          {medicationList != null &&
+            medicationFormatedList.map((item, index) => (
               <div
                 key={index}
                 className="p-5 border border-[#F0F0F0] shadow-custom rounded-lg flex items-center gap-2 justify-between"

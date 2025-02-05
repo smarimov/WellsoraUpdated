@@ -1,19 +1,23 @@
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Form";
-import { Icon } from "@/components/Icon";
 import { Modal } from "@/components/Modal";
 import NavbarWrapper from "@/components/navbar";
 import TabWithPath from "@/components/TabWithPath";
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useSearchParams } from "react-router-dom";
 import {
   ConnectionModel,
   ProceedModel,
   ProviderModel,
 } from "./Components/Models";
-import { redirectToLogin } from "@/FhirEpic/oauthHelpers";
+import {
+  exchangeCodeForToken,
+  redirectToLogin,
+  setTokens,
+} from "@/FhirEpic/oauthHelpers";
 import { usePlan } from "@/context/PlanContext";
 import { Loading } from "@/components/Loading";
+import { apiClient } from "@/FhirEpic/apiClient";
 const TAB_LIST = [
   {
     label: "Past visits",
@@ -42,27 +46,31 @@ enum ModelType {
   PROCEED = "proceed",
 }
 const MedicalRecord = () => {
-  const { handleRecordConnection } = usePlan();
+  const [searchParams] = useSearchParams();
+  const code = searchParams.get("code");
   const [isFetchingLoading, setIsFetchingLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [currentModel, setCurrentModel] = useState<ModelType>(
     ModelType.CONNECTION
   );
-
+  const checkingPatienID = () => {
+    setIsOpen(false);
+    const patientId: string | null = sessionStorage.getItem("patientId");
+    if (!patientId) {
+      setCurrentModel(ModelType.CONNECTION);
+      setIsOpen(true);
+    }
+  };
   const closeAndResetModel = () => {
     setIsOpen(false);
-
     setCurrentModel(ModelType.CONNECTION);
   };
 
   const handleProceededFinal = () => {
     closeAndResetModel();
     setIsFetchingLoading(true);
-    setTimeout(() => {
-      handleRecordConnection(true);
-      setIsFetchingLoading(false);
-    }, 1000);
-    // redirectToLogin();
+    redirectToLogin();
+    // setIsFetchingLoading(false);
   };
   const modelComponents = {
     [ModelType.CONNECTION]: (
@@ -84,6 +92,21 @@ const MedicalRecord = () => {
       />
     ),
   };
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      if (code) {
+        try {
+          const tokens = await exchangeCodeForToken(code);
+          setTokens(tokens); // Save tokens
+          window.location.href = "/medical-record/past-visit";
+        } catch (error) {
+          console.error("Error during token exchange:", error);
+        }
+      }
+    };
+    checkingPatienID();
+    handleOAuthCallback();
+  }, [code]);
   return (
     <>
       <NavbarWrapper
@@ -116,16 +139,18 @@ const MedicalRecord = () => {
           </div>
         </div>
       </div>
-      <Modal
-        show={isOpen}
-        onClose={closeAndResetModel}
-        titlebarClass="hidden"
-        contentClass="max-w-[500px] w-full  flex"
-      >
-        <div className="p-10 min-h-[570px] flex flex-col gap-8 justify-center">
-          {modelComponents[currentModel]}
-        </div>
-      </Modal>
+      {isOpen && (
+        <Modal
+          show={isOpen}
+          onClose={closeAndResetModel}
+          titlebarClass="hidden"
+          contentClass="max-w-[500px] w-full  flex"
+        >
+          <div className="p-10 min-h-[570px] flex flex-col gap-8 justify-center">
+            {modelComponents[currentModel]}
+          </div>
+        </Modal>
+      )}
     </>
   );
 };

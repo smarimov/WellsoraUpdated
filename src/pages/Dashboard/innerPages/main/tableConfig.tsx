@@ -17,7 +17,7 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
     label: "Scheduled date",
     render: (data) => (
       <>
-        <p className="text-sm font-medium">
+        <p className="text-base font-medium">
           {formatAmericanDate(data.dateTime)}
         </p>
         <span className="text-base text-[#B4BAC5] font-medium">
@@ -33,7 +33,7 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
     render: (data) => (
       <div className="flex flex-col min-w-[280px] ">
         <span className="text-base font-medium">{data.appointmentName}</span>
-        <span className="text-sm text-[#B4BAC5] font-medium">
+        <span className="text-base text-[#B4BAC5] font-medium">
           {data.location}
         </span>
       </div>
