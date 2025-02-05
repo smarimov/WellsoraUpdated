@@ -13,7 +13,7 @@ export type AppointmentForm = {
   dateTime?: string;
   firstName: string;
   lastName: string;
-  location: string;
+  location: IOption<string>;
   service: IOption<string>;
   status: TStatus;
   time: string;
@@ -40,7 +40,7 @@ const NewPlanForm = ({
       dateTime: "",
       firstName: "",
       lastName: "",
-      location: "",
+      // location: "",
       status: "new",
     },
   });
@@ -48,7 +48,7 @@ const NewPlanForm = ({
   const selectedStatus = watch("status");
 
   const onSubmit = (data: AppointmentForm) => {
-    const { service, date, time, ...rest } = data;
+    const { location, service, date, time, ...rest } = data;
 
     if (!date || !time) {
       return;
@@ -58,6 +58,7 @@ const NewPlanForm = ({
 
     const finalData: Omit<TPlan, "id"> = {
       ...rest,
+      location: location.value,
       service: service.value,
       dateTime, // Convert and replace dateTime field
     };
@@ -81,7 +82,10 @@ const NewPlanForm = ({
       setValue("date", formattedDate);
       setValue("firstName", currentPlan.firstName);
       setValue("lastName", currentPlan.lastName);
-      setValue("location", currentPlan.location);
+      setValue("location", {
+        label: currentPlan.location,
+        value: currentPlan.location,
+      });
       setValue("appointmentName", currentPlan.appointmentName);
       setValue("service", {
         label: currentPlan.service,
@@ -160,7 +164,7 @@ const NewPlanForm = ({
           onOpen={fetchGoogleMapsLocations}
           options={options}
         /> */}
-        <Autocomplete
+        {/* <Autocomplete
           apiKey="AIzaSyAw3cYpdPTYMQ1iLd85W2PeZu-zHz72gMM"
           style={{ width: "90%" }}
           onPlaceSelected={(place) => {
@@ -171,6 +175,34 @@ const NewPlanForm = ({
             componentRestrictions: { country: "ru" },
           }}
           defaultValue="Amsterdam"
+        /> */}
+        <autocompolete.Form
+          control={control}
+          required
+          name="location"
+          placeholder="Select location..."
+          options={[
+            {
+              label: "3900 City Ave, Philadelphia, PA 19131, USA",
+              value: "3900 City Ave, Philadelphia, PA 19131, USA",
+            },
+            {
+              label: "3900 Woodland Ave, Philadelphia, PA 19104, USA",
+              value: "3900 Woodland Ave, Philadelphia, PA 19104, USA",
+            },
+            {
+              label: "455 Devon Park Dr, Wayne, PA 19087, USA",
+              value: "455 Devon Park Dr, Wayne, PA 19087, USA",
+            },
+            {
+              label: "381 W Dekalb Pike, King of Prussia, PA 19406, USA",
+              value: "381 W Dekalb Pike, King of Prussia, PA 19406, USA",
+            },
+            {
+              label: "23 Carland Rd, Conshohocken, PA 19428, USA",
+              value: "23 Carland Rd, Conshohocken, PA 19428, USA",
+            },
+          ]}
         />
         <div className="flex gap-3">
           <Input.Form
