@@ -59,7 +59,7 @@ const Main = () => {
       )
       .sort(
         (a, b) =>
-          new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime()
+          new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
       );
   }, [plans, current]);
 

@@ -49,7 +49,7 @@ export const toCamelCase = (str: string): string => {
  * @returns {string} - Formatted date in "MMMM D, YYYY" format.
  */
 export const formatAmericanDate = (isoDate: string): string => {
-  return dayjs(isoDate).format("MMMM D, YYYY");
+  return dayjs(isoDate).format("MMM D, YYYY");
 };
 
 /**
