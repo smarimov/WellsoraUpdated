@@ -24,20 +24,52 @@ const getUniquePatientCount = (appointments: TPlan[]): number => {
   );
   return uniquePatients.size;
 };
-const getCompletedPlan = (appointments: TPlan[]): number => {
-  return appointments.filter((e) => e.status === "resolved").length;
-};
-const getUpcomingAppointments = (appointments: TPlan[]): number => {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0); // Normalize today to 00:00:00
 
-  const nextWeek = new Date();
-  nextWeek.setDate(now.getDate() + 7);
-  nextWeek.setHours(23, 59, 59, 999); // Ensure full 7-day range
+const getCompletedPlan = (appointments: TPlan[]): number => {
+  const now = new Date();
+  now.setUTCHours(0, 0, 0, 0); // Normalize to 00:00:00 UTC
+
+  // Find the start of this week (Monday)
+  const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Move back to Monday
+  const thisMonday = new Date(now);
+  thisMonday.setUTCDate(now.getUTCDate() - daysSinceMonday);
+  thisMonday.setUTCHours(0, 0, 0, 0); // Start of this Monday
+
+  // Find the end of this week (Sunday)
+  const thisSunday = new Date(thisMonday);
+  thisSunday.setUTCDate(thisMonday.getUTCDate() + 6);
+  thisSunday.setUTCHours(23, 59, 59, 999); // End of this Sunday
 
   return appointments.filter((appt) => {
     const appointmentDate = new Date(appt.dateTime);
-    return appointmentDate > now && appointmentDate <= nextWeek;
+    return (
+      appt.status === "resolved" &&
+      appointmentDate >= thisMonday &&
+      appointmentDate <= thisSunday
+    );
+  }).length;
+};
+
+const getUpcomingAppointments = (appointments: TPlan[]): number => {
+  const now = new Date();
+  now.setUTCHours(0, 0, 0, 0); // Normalize to 00:00:00 UTC
+
+  // Get the upcoming Monday
+  const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const daysUntilNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek; // Move to next Monday
+  const nextMonday = new Date(now);
+  nextMonday.setUTCDate(now.getUTCDate() + daysUntilNextMonday);
+  nextMonday.setUTCHours(0, 0, 0, 0); // Start of next Monday
+
+  // Get the next Sunday (end of next week)
+  const nextSunday = new Date(nextMonday);
+  nextSunday.setUTCDate(nextMonday.getUTCDate() + 6);
+  nextSunday.setUTCHours(23, 59, 59, 999); // End of next Sunday
+
+  return appointments.filter((appt) => {
+    const appointmentDate = new Date(appt.dateTime); // UTC datetime
+    return appointmentDate >= nextMonday && appointmentDate <= nextSunday;
   }).length;
 };
 
@@ -92,8 +124,11 @@ const Main = () => {
             variant="contained"
             color="primary"
             size="md"
-            className=" max-w-[215px] w-full"
-            onClick={() => setIsOpen(true)}
+            className="max-w-[215px] w-full"
+            onClick={() => {
+              setCurrentPlan(null); // Reset before opening the modal
+              setIsOpen(true);
+            }}
           >
             Create new plan
           </Button>
@@ -123,7 +158,7 @@ const Main = () => {
             </div>
             <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[211px] w-full h-[100px]">
               <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
-                Active caregivers
+                Caring for
               </p>
               <span className="text-3xl font-bold ">
                 {getUniquePatientCount(plans)}

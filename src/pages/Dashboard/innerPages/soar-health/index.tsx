@@ -7,10 +7,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { set } from "react-hook-form";
 
-const SORA_SEARCH_URL =
-  "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search"; // Replace with your API URL
-const AUTH_TOKEN = Cookies.get("wellsora_token"); // Replace with your actual token
-
 const options = [
   {
     title: "What is emergency cost coverage in the U.S., and how does it work?",
@@ -50,6 +46,10 @@ const SoarHeath = () => {
     caregiving. For medical concerns or emergencies, please call your\
     doctor immediately."
   );
+
+  const SORA_SEARCH_URL =
+    "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search"; // Replace with your API URL
+  const AUTH_TOKEN = Cookies.get("wellsora_token"); // Replace with your actual token
 
   const soraSearch = async () => {
     try {
@@ -102,9 +102,9 @@ const SoarHeath = () => {
         subTitle="Your trusted partner in providing the non-clinical support you need"
       />
       <div className="p-6 max-w-[1500px] mx-auto">
-        <div className="flex p-3 h-[90px] items-center gap-3 mb-7 border border-gray-200 rounded-lg">
+        <div className="flex p-3 h-[60px] items-center gap-2 mb-7 border border-gray-200 rounded-lg">
           <Input
-            placeholder="e.g. what symptoms siganl hypertension? "
+            placeholder="e.g. what symptoms signal hypertension? "
             className="w-full "
             wrapperClass="border-none"
             rightSection={

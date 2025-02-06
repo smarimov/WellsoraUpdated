@@ -31,9 +31,14 @@ const getStatusStyles = (status: TStatus) => {
   }
 };
 
-const parseHour = (time: string): number => {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour; // Extract hour only
+// Extracts hour and AM/PM period
+const parseHourAndPeriod = (time: string): { hour: number; period: string } => {
+  const match = time.match(/(\d+):\d+\s*(AM|PM)/i);
+  if (!match) return { hour: -1, period: "" }; // Fallback case
+
+  const hour = parseInt(match[1], 10);
+  const period = match[2].toUpperCase();
+  return { hour, period };
 };
 
 const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
@@ -44,9 +49,11 @@ const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
   // Find first appointment slot
   const firstAppointmentTime = timeSlots.find((slot) =>
     appointments.some((appt) => {
-      const apptHour = parseHour(appt.time);
-      const slotHour = parseHour(slot);
-      return apptHour === slotHour;
+      const { hour: apptHour, period: apptPeriod } = parseHourAndPeriod(
+        appt.time
+      );
+      const { hour: slotHour, period: slotPeriod } = parseHourAndPeriod(slot);
+      return apptHour === slotHour && apptPeriod === slotPeriod;
     })
   );
 
@@ -66,12 +73,15 @@ const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
       className="w-[370px] h-[85vh] [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2"
     >
       {timeSlots.map((slotTime) => {
-        const slotHour = parseHour(slotTime);
+        const { hour: slotHour, period: slotPeriod } =
+          parseHourAndPeriod(slotTime);
 
-        // Find all appointments that fall within this hourly range
+        // Find all appointments that match both the hour and AM/PM
         const matchedAppointments = appointments.filter((appt) => {
-          const apptHour = parseHour(appt.time);
-          return apptHour === slotHour; // Match any appointment in the same hour
+          const { hour: apptHour, period: apptPeriod } = parseHourAndPeriod(
+            appt.time
+          );
+          return apptHour === slotHour && apptPeriod === slotPeriod;
         });
 
         return (
