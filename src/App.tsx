@@ -13,12 +13,13 @@ import Conditions from "./pages/Dashboard/innerPages/medical-record/pages/condit
 import Privacy from "./pages/Dashboard/innerPages/privacy";
 import Settings from "./pages/Dashboard/innerPages/settings";
 import LoginPage from "./pages/Auth";
+import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />}>
+        <Route path="/" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>}>
           <Route index element={<Main />} />
           <Route path="sora-health" element={<SoarHeath />} />
           <Route path="care-giver" element={<CareGiver />} />

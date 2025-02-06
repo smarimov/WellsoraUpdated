@@ -4,6 +4,7 @@ import { Icon } from "@/components/Icon";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const LoginPage = () => {
   return (
@@ -66,7 +67,19 @@ const Register = () => {
 };
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Cookies.get("wellsora_token")) {
+      navigate("/");
+    }
+  }, []);
+
   // const handleLogin = async (
   //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   // ) => {
@@ -104,22 +117,32 @@ const Login = () => {
   //     // setError("An error occurred. Please try again later.");
   //   }
   // };
+  
   const handleLogin = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
 
+    // Reset field errors
+    setFieldErrors({ email: "", password: "" });
+    let errors: { email?: string; password?: string } = {};
+
+    if (!email) errors.email = "Required field, please fill it in";
+    if (!password) errors.password = "Required field, please fill it in";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors as { email: string; password: string });
+      return;
+    }
+
     try {
       // Make POST request to the login API
-      const response = await axios.post(
-        "https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/login",
-        {
-          email: "john.doe@example.com",
-          password: "StrongPassword123",
-        }
-      );
+      const response = await axios.post("https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/login", {
+        email: email,
+        password: password,
+      });
 
-      console.log("Protected Data:", response.data);
+      // console.log("Protected Data:", response.data);
       const { token, expiresIn } = response.data;
       console.log(typeof expiresIn, expiresIn);
 
@@ -128,7 +151,7 @@ const Login = () => {
 
       // Set the token in the cookie
       Cookies.set("wellsora_token", token, {
-        secure: false,
+        // secure: false,
         expires: cookieExpiry, // Token expiration time in milliseconds
       });
 
@@ -138,11 +161,18 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       // Handle network or other errors
-      // setError("An error occurred. Please try again later.");
+      setError("Invalid email or password");
+      setTimeout(() => setError(""), 3000);
     }
   };
+
   return (
     <div className="max-w-[460px] mx-auto text-center">
+      {error && (
+        <p className="text-xl font-medium  mb-4 text-red-600 lg:text-red-600">
+          {error}
+        </p>
+      )}
       <p className="mb-4 text-5xl font-bold text-white lg:text-black">
         Welcome
       </p>
@@ -150,8 +180,30 @@ const Login = () => {
         Login to your account
       </p>
       <div className="flex flex-col gap-3 ">
-        <Input placeholder="Email" className="w-full" />
-        <Input placeholder="Password" className="w-full" />
+        <input
+          placeholder="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={`w-full p-2 border ${
+            fieldErrors.email ? "border-red-500" : "border-gray-200"
+          } rounded mt-1`}
+        />
+        {fieldErrors.email && (
+          <p className="text-red-500 text-sm">{fieldErrors.email}</p>
+        )}
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={`w-full p-2 border ${
+            fieldErrors.password ? "border-red-500" : "border-gray-200"
+          } rounded mt-1`}
+        />
+        {fieldErrors.password && (
+          <p className="text-red-500 text-sm">{fieldErrors.password}</p>
+        )}
         <Button
           variant="outline"
           className="lg:text-white lg:bg-Purple-main"
@@ -233,13 +285,23 @@ const Login = () => {
           </div>
           <span className="text-sm text-white lg:text-[#5A5365]">
             By continuing, you agree to our{" "}
-            <span className="text-white underline lg:text-Purple-main">
+            <a
+              href="https://storage.googleapis.com/wellsora-cdn/assets/terms-conditions.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline lg:text-Purple-main"
+            >
               Terms & Conditions
-            </span>{" "}
+            </a>{" "}
             and{" "}
-            <span className="text-white underline lg:text-Purple-main">
+            <a
+              href="https://storage.googleapis.com/wellsora-cdn/assets/privacy-policy.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline lg:text-Purple-main"
+            >
               Privacy Policy
-            </span>{" "}
+            </a>{" "}
           </span>
           <span className="text-sm text-white lg:text-[#5A5365]">
             Your data is secure with us. We're HIPAA complaint and use

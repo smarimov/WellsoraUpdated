@@ -2,6 +2,12 @@ import { NavLink } from "react-router-dom";
 import { Icon } from "../Icon";
 import clsx from "clsx";
 import "./style.sass";
+import Cookies from "js-cookie";
+
+const handleLogout = () => {
+  Cookies.remove("wellsora_token"); // Remove auth cookie
+  window.location.href = "/auth/login"; // Redirect to login page
+};
 
 const Sidebar = () => {
   return (
@@ -89,8 +95,8 @@ const Sidebar = () => {
             Privacy Policy
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/auth/login" className={clsx("sidebar__links")} end>
+        <li onClick={handleLogout} style={{ cursor: "pointer" }}>
+          <NavLink to="#" className={clsx("sidebar__links")} end>
             <Icon icon="navLogout" color="inherit" />
             Logout
           </NavLink>
