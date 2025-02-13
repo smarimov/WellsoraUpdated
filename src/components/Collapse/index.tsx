@@ -95,17 +95,17 @@ const AccordionItem: React.FC<IAccordianProps> = ({
                 {number}{" "}
               </span>
             )}{" "}
-            {question}
+            <span className="text-xl lg:text-2xl">{question}</span>
             {isRandom && (
-              <span className="absolute px-10 h-fit text-white bg-black border text-base border-black rounded-lg right-[60px]   ">
-                {randomNumbe} benefits
+              <span className="absolute flex flex-col items-center custom-bp-900:flex-row px-2 w-fit justify-center  custom-bp-900:gap-1 h-fit custom-bp-900:w-[155px] text-nowrap text-white bg-black border text-base border-black rounded-lg right-[35px] custom-bp-900:right-[60px]">
+                <span>{randomNumbe}</span> <span>benefits</span>
               </span>
             )}{" "}
           </div>
           {isOpen ? (
             //
             isSora ? (
-              <div className=" w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
+              <div className=" min-w-[30px] w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
                 <svg
                   width="22"
                   height="22"
@@ -126,7 +126,7 @@ const AccordionItem: React.FC<IAccordianProps> = ({
               <Icon icon="ArrowUp" color="inherit" size={24} />
             )
           ) : isSora ? (
-            <div className=" w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
+            <div className="min-w-[30px] w-[30px] h-[30px] bg-Purple-main rounded-full flex items-center justify-center">
               <svg
                 width="14"
                 height="14"

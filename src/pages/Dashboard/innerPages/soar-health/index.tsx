@@ -101,7 +101,7 @@ const SoarHeath = () => {
         title="Sora Health+"
         subTitle="Your trusted partner in providing the non-clinical support you need"
       />
-      <div className="p-6 max-w-[1500px] mx-auto">
+      <div className="p-6 max-w-[1500px] mx-auto min-w-[550px] overflow-auto">
         <div className="flex p-3 h-[60px] items-center gap-2 mb-7 border border-gray-200 rounded-lg">
           <Input
             placeholder="e.g. what symptoms signal hypertension? "

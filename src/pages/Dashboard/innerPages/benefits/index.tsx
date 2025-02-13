@@ -187,19 +187,22 @@ const Benefits = () => {
       <NavbarWrapper
         title="Benefits"
         subTitle="Explore your benefits: cost, coverage & savings"
-        action={
+        action={({ onClick }) => (
           <Button
             variant="contained"
             color="primary"
             size="md"
             className=" max-w-[215px] w-full"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              onClick();
+              setIsOpen(true);
+            }}
           >
             Connect Insurance
           </Button>
-        }
+        )}
       />
-      <div className="p-6 h-full mx-auto max-w-[1500px]">
+      <div className="p-6 h-full mx-auto max-w-[1500px] min-w-[550px] overflow-auto">
         <div className="flex p-3  h-[60px] items-center gap-2 mb-7 border border-gray-200  rounded-lg">
           <Input
             placeholder="Search procedures, treatments or services...."
@@ -281,6 +284,7 @@ const BenefitInnerList = ({ list, onSelect }: IBenefitChildProps) => {
           <Button
             variant="outline"
             className="bg-transparent border-none hover:bg-transparent hover:text-Purple-main"
+            wrap="nowrap"
             onClick={(event: React.MouseEvent) => {
               event.stopPropagation();
               onSelect(item);
@@ -306,28 +310,14 @@ const BenefitDetailModel = ({ onClose, current }: ModelBenefitProps) => {
         <p className="mb-1 text-base font-medium ">{current.benefitCategory}</p>
       </div>
       <div className="flex gap-2 py-3 border-b">
-        <div className="w-10" style={{ color: "rgb(27, 119, 155)" }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="12" y1="1" x2="12" y2="23"></line>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-          </svg>
-        </div>
         <div>
-          <span className="block mr-1 text-xl font-bold">Cost</span>
-          <span className="text-lg font-semibold text-Purple-main">
+          <p className="flex items-center gap-1 p-0 m-0 text-xl font-bold before:content-['']  before:w-[28px] before:h-[28px] before:bg-no-repeat before:bg-contain  before:bg-[url('/assets/dollorSign.svg')]">
+            Cost
+          </p>
+          <span className="ml-8 text-lg font-semibold text-Purple-main">
             {current.benefitCost.bold}
           </span>
-          <div>
+          <div className="ml-8">
             {current.benefitCost.description.length > 0 &&
               current.benefitCost.description.map((desc) => (
                 <div key={desc._id} className="mb-1 text-base">
@@ -339,27 +329,12 @@ const BenefitDetailModel = ({ onClose, current }: ModelBenefitProps) => {
       </div>
 
       <div className="flex gap-2 py-3 border-b ">
-        <div className="w-6" style={{ color: "rgb(27, 119, 155)" }}>
-          <svg
-            stroke="currentColor"
-            fill="currentColor"
-            strokeWidth="0"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            color="rgb(27, 119, 155)"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path fill="none" d="M0 0h24v24H0z"></path>
-            <path d="M10.5 13H8v-3h2.5V7.5h3V10H16v3h-2.5v2.5h-3V13zM12 2 4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"></path>
-          </svg>
-        </div>
-
         <div>
-          <span className="block mr-1 text-xl font-bold">
+          <p className="flex items-center gap-1 p-0 m-0 text-xl font-bold before:content-['']  before:w-[28px] before:h-[28px] before:bg-no-repeat before:bg-contain  before:bg-[url('/assets/eligibility.svg')]">
             Eligibility requirements
-          </span>
-          <div>
+          </p>
+
+          <div className="ml-8">
             {current.benefitEligibility.length > 0 &&
               current.benefitEligibility.map((desc) => (
                 <div className="mb-1 text-base" key={desc._id}>
@@ -370,29 +345,12 @@ const BenefitDetailModel = ({ onClose, current }: ModelBenefitProps) => {
         </div>
       </div>
       <div className="flex gap-2 py-3 border-b">
-        <div className="w-6" style={{ color: "rgb(27, 119, 155)" }}>
-          <svg
-            stroke="currentColor"
-            fill="currentColor"
-            strokeWidth="0"
-            viewBox="0 0 24 24"
-            color="rgb(27, 119, 155)"
-            height="24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g id="Clock_2">
-              <g>
-                <path d="M12,21.933A9.933,9.933,0,1,1,21.933,12,9.944,9.944,0,0,1,12,21.933ZM12,3.067A8.933,8.933,0,1,0,20.933,12,8.943,8.943,0,0,0,12,3.067Z"></path>
-                <path d="M18,12.5H12a.429.429,0,0,1-.34-.14c-.01,0-.01-.01-.02-.02A.429.429,0,0,1,11.5,12V6a.5.5,0,0,1,1,0v5.5H18A.5.5,0,0,1,18,12.5Z"></path>
-              </g>
-            </g>
-          </svg>
-        </div>
         <div>
-          <span className="block mr-1 text-xl font-bold">Frequency</span>
+          <p className="flex items-center gap-1 p-0 m-0 text-xl font-bold before:content-['']  before:w-[28px] before:h-[28px] before:bg-no-repeat before:bg-contain  before:bg-[url('/assets/frequency.svg')]">
+            Frequency
+          </p>
 
-          <div>
+          <div className="ml-8">
             {current.benefitFrequency.length > 0 &&
               current.benefitFrequency.map((desc) => (
                 <div className="mb-1 text-base" key={desc._id}>

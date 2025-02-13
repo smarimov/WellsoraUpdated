@@ -15,7 +15,7 @@ interface TabsProps {
 
 const TabWithPath: React.FC<TabsProps> = ({ tabs }) => {
   return (
-    <div className="tab_with_path">
+    <div className="overflow-x-auto overflow-y-hidden tab_with_path">
       {tabs.map((tab) => (
         <NavLink
           key={tab.value}

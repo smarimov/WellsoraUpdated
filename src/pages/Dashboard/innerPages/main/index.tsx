@@ -17,6 +17,7 @@ import {
   formatCurrentDate,
   formatTimeAmerican,
 } from "@/utils";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const getUniquePatientCount = (appointments: TPlan[]): number => {
   const uniquePatients = new Set(
@@ -74,6 +75,8 @@ const getUpcomingAppointments = (appointments: TPlan[]): number => {
 };
 
 const Main = () => {
+  const isTablet = useMediaQuery("(max-width: 1200px)");
+  const [isScheduledModel, setIsScheduledModel] = useState(false);
   const { plans, deletePlan, addPlan, updatePlan } = usePlan();
   const [selectedDay, setSelected] = useState(formatCurrentDate());
   const [isOpen, setIsOpen] = useState(false);
@@ -119,56 +122,65 @@ const Main = () => {
       <NavbarWrapper
         title="Welcome, Bernie"
         subTitle="Here's what's happening with your appointments today"
-        action={
+        action={({ onClick }) => (
           <Button
             variant="contained"
             color="primary"
             size="md"
             className="max-w-[215px] w-full"
             onClick={() => {
+              onClick();
               setCurrentPlan(null); // Reset before opening the modal
               setIsOpen(true);
             }}
           >
             Create new plan
           </Button>
-        }
+        )}
         isDashboard
       />
-      <div className="flex min-w-[1300px] overflow-x-auto h-full gap-10">
-        <div className="flex-1 min-w-0 p-4 py-5">
+      {/* min-w-[1300px] */}
+      <div className="flex min-w-[1300px] overflow-x-auto h-full gap-5  ">
+        <div className="flex-1 min-w-0 p-4 py-5 ">
           <DateList
-            onDateSelect={(val) => setSelected(formatAmericanDate(val))}
+            onDateSelect={(val) => {
+              setSelected(formatAmericanDate(val));
+              if (isTablet) {
+                setIsScheduledModel(true);
+              }
+            }}
           />
 
-          <div className="flex flex-wrap justify-between gap-1 py-5 my-1">
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  max-w-[211px] w-full  h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+          <div className="flex justify-between gap-4 py-5 my-1">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg   w-full  h-[100px]">
+              <p className="mb-2 text-lg font-bold text-center text-[#B4BAC5]">
                 Total appointments
               </p>
-              <span className="text-3xl font-bold ">{plans.length}</span>
+              <span className="block text-3xl font-bold text-center ">
+                {plans.length}
+              </span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[211px] w-full h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  w-full h-[100px]">
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5] text-center">
                 Upcoming week
               </p>
-              <span className="text-3xl font-bold ">
+              <span className="block text-3xl font-bold text-center ">
                 {getUpcomingAppointments(plans)}
               </span>
             </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[211px] w-full h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  w-full h-[100px]">
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5] text-center">
                 Caring for
               </p>
-              <span className="text-3xl font-bold ">
+              <span className="block text-3xl font-bold text-center">
                 {getUniquePatientCount(plans)}
               </span>
             </div>
             <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[210px] w-full h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5]">
+              <p className="mb-2 text-lg font-bold text-[#B4BAC5] text-center">
                 Completed this week
               </p>
-              <span className="text-3xl font-bold ">
+              <span className="block text-3xl font-bold text-center">
                 {getCompletedPlan(plans)}
               </span>
             </div>
@@ -176,6 +188,15 @@ const Main = () => {
 
           <div className="flex items-center justify-between gap-3 py-5 my-1 mb-2">
             <p className="text-xl font-bold text-[#0F1527]">All appointments</p>
+            {isTablet && (
+              <Button
+                className="ml-4 mr-auto"
+                size="sm"
+                onClick={() => setIsScheduledModel(true)}
+              >
+                Open scheduled detail
+              </Button>
+            )}
             <Input
               leftSection={<Icon icon="Search1" color="inherit" />}
               placeholder="Search"
@@ -195,10 +216,18 @@ const Main = () => {
           />
         </div>
 
-        <TimeList appointments={appointmentByDay} />
+        {!isTablet ? (
+          <div
+            style={{
+              width: "min(370px, 100vw - 70%)",
+            }}
+          >
+            <TimeList appointments={appointmentByDay} />
+          </div>
+        ) : null}
       </div>
       <Modal
-        contentClass="min-w-[610px]"
+        contentClass="max-w-[600px] w-full"
         show={isOpen}
         onClose={() => setIsOpen(false)}
         titlebarClass="hidden"
@@ -208,6 +237,15 @@ const Main = () => {
           sendingData={createAppointment}
           currentPlan={currentPlan}
         />
+      </Modal>
+      <Modal
+        contentClass="max-w-[500px] w-full"
+        show={isScheduledModel && isScheduledModel}
+        onClose={() => setIsScheduledModel(false)}
+      >
+        <div>
+          <TimeList appointments={appointmentByDay} isModalView />
+        </div>
       </Modal>
     </>
   );

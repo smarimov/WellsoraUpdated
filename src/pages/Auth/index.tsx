@@ -5,24 +5,36 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/utils";
 
 const LoginPage = () => {
+  const isTablet = useMediaQuery("(max-width: 1024px)");
   return (
     <div className="flex h-screen bg-Purple-main lg:bg-white">
-      <div className="relative flex items-center justify-center flex-1 p-5">
-        <div className="max-w-[400px] w-full max-h-[186px] h-full absolute top-12 lg:hidden ">
-          <img src="../assets/wellsora-bg.png" style={{ objectFit: "cover" }} />
-        </div>
-        <Login />
-      </div>
-      <div className="items-center justify-center flex-1 hidden p-5 lg:flex bg-Purple-main ">
-        <div className="max-w-[600px] w-full max-h-[186px] h-full flex justify-center items-center">
-          {/* <img src="../assets/wellsora-bg.png" style={{ objectFit: "cover" }} /> */}
-          <h1 className="font-extrabold text-[72px] text-white text-center">
+      <div
+        className={cn(
+          "flex items-center justify-center flex-1 p-5",
+          isTablet && "flex-col "
+        )}
+      >
+        {isTablet && (
+          <h1 className="font-extrabold md:text-[72px] text-[50px] text-white text-center md:mb-20 mb-24 ">
             Wellsora Health
           </h1>
-        </div>
+        )}
+
+        <Login />
       </div>
+      {!isTablet && (
+        <div className="flex items-center justify-center flex-1 p-5 bg-Purple-main ">
+          <div className="max-w-[600px] w-full max-h-[186px] h-full flex justify-center items-center">
+            <h1 className="font-extrabold text-[72px] text-white text-center">
+              Wellsora Health
+            </h1>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -117,7 +129,7 @@ const Login = () => {
   //     // setError("An error occurred. Please try again later.");
   //   }
   // };
-  
+
   const handleLogin = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -137,10 +149,13 @@ const Login = () => {
 
     try {
       // Make POST request to the login API
-      const response = await axios.post("https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/login", {
-        email: email,
-        password: password,
-      });
+      const response = await axios.post(
+        "https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/login",
+        {
+          email: email,
+          password: password,
+        }
+      );
 
       // console.log("Protected Data:", response.data);
       const { token, expiresIn } = response.data;
@@ -169,7 +184,7 @@ const Login = () => {
   return (
     <div className="max-w-[460px] mx-auto text-center">
       {error && (
-        <p className="text-xl font-medium  mb-4 text-red-600 lg:text-red-600">
+        <p className="mb-4 text-xl font-medium text-red-600 lg:text-red-600">
           {error}
         </p>
       )}
@@ -190,7 +205,7 @@ const Login = () => {
           } rounded mt-1`}
         />
         {fieldErrors.email && (
-          <p className="text-red-500 text-sm">{fieldErrors.email}</p>
+          <p className="text-sm text-red-500">{fieldErrors.email}</p>
         )}
         <input
           placeholder="Password"
@@ -202,7 +217,7 @@ const Login = () => {
           } rounded mt-1`}
         />
         {fieldErrors.password && (
-          <p className="text-red-500 text-sm">{fieldErrors.password}</p>
+          <p className="text-sm text-red-500">{fieldErrors.password}</p>
         )}
         <Button
           variant="outline"

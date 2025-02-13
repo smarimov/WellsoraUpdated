@@ -6,9 +6,9 @@ const Settings = () => {
   return (
     <>
       <NavbarWrapper title="Settings" setting />
-      <div className="p-5 w-full max-w-[1500px] flex gap-5">
-        <div>
-          <div className="w-[320px] h-[325px] mb-6 bg-[#EFF8FC] rounded flex flex-col items-center justify-center">
+      <div className="p-5 w-full  max-w-[1500px] flex flex-col lg:flex-row gap-5">
+        <div className="lg:max-w-[300px] max-w-full w-full flex-1">
+          <div className=" flex-1 h-[325px] mb-6 bg-[#EFF8FC] rounded flex flex-col items-center justify-center">
             <div className="rounded-[100%] overflow-hidden w-[200px] h-[200px] mb-4">
               <img
                 src="https://tse4.mm.bing.net/th?id=OIP.IGNf7GuQaCqz_RPq5wCkPgHaLH&w=474&h=474&c=7"
@@ -22,14 +22,14 @@ const Settings = () => {
               user@email.com
             </span>
           </div>
-          <div className="w-[320px] py-5 px-6 bg-[#EFF8FC] rounded flex flex-col gap-3">
+          <div className=" flex-1 py-5 px-6 bg-[#EFF8FC] rounded flex flex-col gap-3">
             <span className="mb-2 text-lg font-bold ">Information</span>
             <div className="flex gap-2">
               <span className="text-base font-medium min-w-12">Name:</span>{" "}
               <span className="float-right font-normal">Gandi</span>
             </div>
             <div className="flex gap-2">
-              <span className="text-base font-medium min-w-12">Email:</span>{" "}
+              <span className="text-base font-medium min-w-12">Email:</span>
               <span className="float-right font-normal">user@email.com</span>
             </div>
             <div className="flex gap-2">
@@ -59,7 +59,7 @@ const Settings = () => {
           <div className="flex flex-col flex-1 gap-7">
             <div>
               <p className="mb-3 text-lg font-bold">Account Information</p>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col items-center gap-3 xl:flex-row">
                 <Input placeholder="First Name" className="w-full" />
                 <Input placeholder="Last Name" className="w-full" />
                 <Input placeholder="Tel - Number:" className="w-full" />
@@ -67,17 +67,17 @@ const Settings = () => {
             </div>
             <div>
               <p className="mb-3 text-lg font-bold">Email</p>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col items-end gap-3 xl:items-center xl:flex-row">
                 <Input placeholder="New Email" className="w-full" />
                 <Input placeholder="Enter Password" className="w-full" />
-                <Button color="primary" className="text-nowrap">
+                <Button color="primary" className="text-nowrap ">
                   Change Email
                 </Button>
               </div>
             </div>
             <div>
               <p className="mb-3 text-lg font-bold">Password</p>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col items-end gap-3 xl:items-center xl:flex-row ">
                 <Input placeholder="New Email" className="w-full" />
                 <Input placeholder="Enter Password" className="w-full" />
                 <Button color="primary" className="text-nowrap">
@@ -91,7 +91,7 @@ const Settings = () => {
               <span>Phone Notification:</span>
               <span>Push Notification:</span>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 lg:flex-row">
               <Button> Save Changes</Button>
               <Button variant="outline"> Forgot your password?</Button>
             </div>

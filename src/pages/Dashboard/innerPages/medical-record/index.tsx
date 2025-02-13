@@ -112,17 +112,20 @@ const MedicalRecord = () => {
       <NavbarWrapper
         title="Medical records"
         subTitle="All your health records, one secure connection"
-        action={
+        action={({ onClick }) => (
           <Button
             variant="contained"
             color="primary"
             size="md"
             className=" max-w-[215px] w-full"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              onClick();
+              setIsOpen(true);
+            }}
           >
             Connect records
           </Button>
-        }
+        )}
       />
       <div className="p-5 max-w-[1500px]  mx-auto">
         <div className="overflow-hidden bg-white rounded-2xl shadow-custom border border-[#F0F0F0] h-full">

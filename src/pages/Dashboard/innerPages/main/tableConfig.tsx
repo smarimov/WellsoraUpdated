@@ -25,6 +25,7 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
         </span>
       </>
     ),
+    style: { minWidth: 144 },
   },
 
   {

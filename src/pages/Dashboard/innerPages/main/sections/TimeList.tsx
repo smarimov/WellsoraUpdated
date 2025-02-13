@@ -1,4 +1,5 @@
 import { TStatus } from "@/context/PlanContext";
+import { cn } from "@/utils";
 import React, { useEffect, useRef } from "react";
 
 export type Appointment = {
@@ -41,7 +42,13 @@ const parseHourAndPeriod = (time: string): { hour: number; period: string } => {
   return { hour, period };
 };
 
-const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
+const TimeList = ({
+  appointments,
+  isModalView = false,
+}: {
+  appointments: Appointment[];
+  isModalView?: boolean;
+}) => {
   const timeSlots = generateTimeSlots();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const firstAppointmentRef = useRef<HTMLDivElement | null>(null);
@@ -70,7 +77,14 @@ const TimeList = ({ appointments }: { appointments: Appointment[] }) => {
   return (
     <div
       ref={scrollContainerRef}
-      className="w-[370px] h-[85vh] [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2"
+      className={cn(
+        "fixed right-0 bg-white h-full [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2",
+        isModalView && "static max-h-[700px] h-full "
+      )}
+      style={{
+        width: !isModalView ? "min(370px, 100vw - 70%)" : "100%", // Max 370px, but shrinks on smaller screens
+        left: "calc(100% - min(370px, 100vw - 70%))", // Dynamically adjust left based on width
+      }}
     >
       {timeSlots.map((slotTime) => {
         const { hour: slotHour, period: slotPeriod } =

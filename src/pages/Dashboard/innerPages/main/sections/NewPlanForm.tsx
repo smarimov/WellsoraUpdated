@@ -96,7 +96,7 @@ const NewPlanForm = ({
   }, [currentPlan, setValue]);
   return (
     <FormWrapper methods={appointmentForm} onSubmit={onSubmit}>
-      <div className="max-w-[500px] min-h-[550px] p-10 px-0 flex flex-col  mx-auto gap-6">
+      <div className=" min-h-[550px] p-10 px-5 flex flex-col  mx-auto gap-6">
         <div className="flex gap-3">
           <Input.Form
             control={control}

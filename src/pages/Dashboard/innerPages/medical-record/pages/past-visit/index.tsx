@@ -106,7 +106,7 @@ const PastVisit = () => {
             pastVisitFormatedList.map((visit, index) => (
               <div
                 key={index}
-                className="p-5 border border-[#F0F0F0] shadow-custom rounded-lg flex items-center gap-2 "
+                className="p-5 border border-[#F0F0F0] shadow-custom rounded-lg flex md:items-center items-start md:flex-row flex-col gap-2 "
               >
                 <div>
                   <p className="text-[#0F1527] text-xl font-bold">
@@ -120,11 +120,12 @@ const PastVisit = () => {
                     {visit.department}
                   </span>
                 </div>
-                <span className="ml-auto mr-4 text-lg font-medium">
+                <span className="ml-0 mr-4 text-lg font-medium md:ml-auto">
                   {visit.date}
                 </span>
                 <Button
                   variant="outline"
+                  wrap="nowrap"
                   onClick={() => handleVisitModal(visit)}
                 >
                   Visit Results

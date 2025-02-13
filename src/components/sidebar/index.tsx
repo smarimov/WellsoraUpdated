@@ -3,6 +3,8 @@ import { Icon } from "../Icon";
 import clsx from "clsx";
 import "./style.sass";
 import Cookies from "js-cookie";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/utils";
 
 const handleLogout = () => {
   Cookies.remove("wellsora_token"); // Remove auth cookie
@@ -10,37 +12,50 @@ const handleLogout = () => {
 };
 
 const Sidebar = () => {
+  const isMobile = useMediaQuery("(max-width: 800px)");
   return (
-    <div className=" flex flex-col h-full flex-1 justify-start  bg-Purple-main p-6 sidebar w-[270px] fixed ">
-      {/* <div className="w-[229px] h-[60px] mx-auto mb-[56px]">
-        <img src="../assets/wellsora.png" style={{ objectFit: "cover" }} />
-      </div> */}
-      <div className="mb-10 text-5xl font-extrabold text-center text-white">
-        Wellsora
-      </div>
+    <div
+      className={cn(
+        " flex flex-col h-full flex-1 justify-start bg-Purple-main p-6 sidebar w-[270px] fixed ",
+        isMobile && "w-[80px] p-1 items-center justify-center "
+      )}
+    >
+      {!isMobile && (
+        <div className="mb-10 text-5xl font-extrabold text-center text-white">
+          Wellsora
+        </div>
+      )}
       <ul>
         <li>
           <NavLink
             to="/"
             className={({ isActive }) =>
-              clsx("sidebar__links", { active_link: isActive })
+              clsx(
+                "sidebar__links",
+                { active_link: isActive },
+                isMobile && "justify-center p-2 rounded mb-4"
+              )
             }
             end
           >
             <Icon icon="dashboard" color="inherit" />
-            Dashboard
+            {!isMobile && "Dashboard"}
           </NavLink>
         </li>
         <li>
           <NavLink
             to="/sora-health"
             className={({ isActive }) =>
-              clsx("sidebar__links", { active_link: isActive })
+              clsx(
+                "sidebar__links",
+                { active_link: isActive },
+                isMobile && "justify-center p-2 rounded mb-4"
+              )
             }
             end
           >
             <Icon icon="sora" color="inherit" />
-            Sora Health
+            {!isMobile && "Sora Health"}
           </NavLink>
         </li>
 
@@ -48,57 +63,90 @@ const Sidebar = () => {
           <NavLink
             to="/medical-record/past-visit"
             className={({ isActive }) =>
-              clsx("sidebar__links", { active_link: isActive })
+              clsx(
+                "sidebar__links",
+                { active_link: isActive },
+                isMobile && "justify-center p-2 rounded mb-4"
+              )
             }
             end
           >
             <Icon icon="record" color="inherit" />
-            Connecting records
+            {!isMobile && "Connecting records"}
           </NavLink>
         </li>
         <li>
           <NavLink
             to="/benefits"
             className={({ isActive }) =>
-              clsx("sidebar__links", { active_link: isActive })
+              clsx(
+                "sidebar__links",
+                { active_link: isActive },
+                isMobile && "justify-center p-2 rounded mb-4"
+              )
             }
             end
           >
             <Icon icon="benefit" color="inherit" />
-            Benefits
+            {!isMobile && "Benefits"}
           </NavLink>
         </li>
         <li>
           <NavLink
             to="/care-giver"
             className={({ isActive }) =>
-              clsx("sidebar__links", { active_link: isActive })
+              clsx(
+                "sidebar__links",
+                { active_link: isActive },
+                isMobile && "justify-center p-2 rounded mb-4"
+              )
             }
             end
           >
             <Icon icon="caregiver" color="inherit" />
-            Find a caregiver
+            {!isMobile && "Find a caregiver"}
           </NavLink>
         </li>
       </ul>
 
-      <ul className="mt-auto">
+      <ul className={cn("mt-auto", isMobile && "mt-0")}>
         <li>
-          <NavLink to="settings" className={clsx("sidebar__links")} end>
+          <NavLink
+            to="settings"
+            className={clsx(
+              "sidebar__links",
+              isMobile && "justify-center p-2 rounded mb-4"
+            )}
+            end
+          >
             <Icon icon="navSetting" color="inherit" />
-            Settings
+            {!isMobile && "Settings"}
           </NavLink>
         </li>
         <li>
-          <NavLink to="/privacy" className={clsx("sidebar__links")} end>
+          <NavLink
+            to="/privacy"
+            className={clsx(
+              "sidebar__links",
+              isMobile && "justify-center p-2 rounded mb-4"
+            )}
+            end
+          >
             <Icon icon="navPrivacy" color="inherit" />
-            Privacy Policy
+            {!isMobile && "Privacy Policy"}
           </NavLink>
         </li>
         <li onClick={handleLogout} style={{ cursor: "pointer" }}>
-          <NavLink to="#" className={clsx("sidebar__links")} end>
+          <NavLink
+            to="#"
+            className={clsx(
+              "sidebar__links",
+              isMobile && "justify-center p-2 rounded mb-4"
+            )}
+            end
+          >
             <Icon icon="navLogout" color="inherit" />
-            Logout
+            {!isMobile && "Logout"}
           </NavLink>
         </li>
       </ul>

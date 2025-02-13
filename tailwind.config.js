@@ -76,6 +76,9 @@ export default {
       maxWidth: {
         xl: "1480px",
       },
+      screens: {
+        "custom-bp-900": "900px", // Add your custom breakpoint here
+      },
     },
   },
 
