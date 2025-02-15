@@ -2,29 +2,27 @@ import { Autocomplete as autocompolete } from "@/components/Autocomplete";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Form";
 import { FormWrapper } from "@/components/Form/FormWrapper";
-import { TPlan, TStatus } from "@/context/PlanContext";
 import { IOption } from "@/types";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import Autocomplete from "react-google-autocomplete";
+import { Plan, TCreatePlan, TStatus } from "../api";
+import { CustomGoogleAutoComplete } from "./CustomGoogleAutoComplete";
 
 export type AppointmentForm = {
   appointmentName: string;
-  dateTime?: string;
   firstName: string;
   lastName: string;
-  location: IOption<string>;
-  service: IOption<string>;
+  location: string;
+  services: IOption<string>;
   status: TStatus;
   time: string;
   date: string;
-  // document_status_id?: IOption<string>
 };
 
 interface NewPlanFormProps {
   onClose: VoidFunction;
-  sendingData: (data: Omit<TPlan, "id">) => void;
-  currentPlan: TPlan | null;
+  sendingData: (data: TCreatePlan) => void;
+  currentPlan: Plan | null;
 }
 const NewPlanForm = ({
   onClose,
@@ -33,63 +31,52 @@ const NewPlanForm = ({
 }: NewPlanFormProps) => {
   const [options, setOptions] = useState<IOption[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const handleLocationSelect = (selected: google.maps.places.PlaceResult) => {
+    const { formatted_address } = selected;
+    setValue("location", formatted_address || "");
+  };
 
   const appointmentForm = useForm<AppointmentForm>({
     defaultValues: {
       appointmentName: "",
-      dateTime: "",
       firstName: "",
       lastName: "",
-      // location: "",
-      status: "new",
+      location: "",
+      status: "New",
     },
   });
   const { control, watch, setValue, reset } = appointmentForm;
   const selectedStatus = watch("status");
 
   const onSubmit = (data: AppointmentForm) => {
-    const { location, service, date, time, ...rest } = data;
+    const { location, services, date, time, ...rest } = data;
 
     if (!date || !time) {
       return;
     }
-    // Create ISO dateTime format
-    const dateTime = new Date(`${date}T${time}:00`).toISOString();
 
-    const finalData: Omit<TPlan, "id"> = {
+    const finalData: TCreatePlan = {
       ...rest,
-      location: location.value,
-      service: service.value,
-      dateTime, // Convert and replace dateTime field
+      date,
+      time,
+      location: location,
+      services: services.value,
     };
+
     sendingData(finalData);
-
-    console.log("Final Appointment Data Submitted:", finalData);
   };
-
-  // useEffect(() => {
-  //   loadGoogleMapsScript(() => {
-  //     setIsLoaded(true);
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (currentPlan != null) {
-      const dateTime = new Date(currentPlan.dateTime);
-      const formattedDate = dateTime.toISOString().split("T")[0];
-      const formattedTime = dateTime.toTimeString().slice(0, 5);
-      setValue("time", formattedTime);
-      setValue("date", formattedDate);
+      setValue("time", currentPlan.time);
+      setValue("date", currentPlan.date);
       setValue("firstName", currentPlan.firstName);
       setValue("lastName", currentPlan.lastName);
-      setValue("location", {
-        label: currentPlan.location,
-        value: currentPlan.location,
-      });
+      setValue("location", currentPlan.location);
       setValue("appointmentName", currentPlan.appointmentName);
-      setValue("service", {
-        label: currentPlan.service,
-        value: currentPlan.service,
+      setValue("services", {
+        label: currentPlan.services,
+        value: currentPlan.services,
       });
       setValue("status", currentPlan.status);
     }
@@ -127,82 +114,39 @@ const NewPlanForm = ({
             <div className="flex gap-3">
               <Button
                 color="primary"
-                variant={selectedStatus === "new" ? "contained" : "outline"}
+                variant={selectedStatus === "New" ? "contained" : "outline"}
                 className="w-full"
-                onClick={() => field.onChange("new")}
+                onClick={() => field.onChange("New")}
               >
                 New
               </Button>
               <Button
                 color="primary"
                 variant={
-                  selectedStatus === "progress" ? "contained" : "outline"
+                  selectedStatus === "In Progress" ? "contained" : "outline"
                 }
                 className="w-full"
-                onClick={() => field.onChange("progress")}
+                onClick={() => field.onChange("In Progress")}
               >
                 In progress
               </Button>
               <Button
                 color="primary"
                 variant={
-                  selectedStatus === "resolved" ? "contained" : "outline"
+                  selectedStatus === "Resolved" ? "contained" : "outline"
                 }
                 className="w-full"
-                onClick={() => field.onChange("resolved")}
+                onClick={() => field.onChange("Resolved")}
               >
                 Resolved
               </Button>
             </div>
           )}
         />
-        {/* <Autocomplete.Form
-          control={control}
-          required
-          name="location"
-          placeholder="Select location..."
-          onOpen={fetchGoogleMapsLocations}
-          options={options}
-        /> */}
-        {/* <Autocomplete
-          apiKey="Google_Maps_API_Key"
-          style={{ width: "90%" }}
-          onPlaceSelected={(place) => {
-            console.log(place);
-          }}
-          options={{
-            types: ["(regions)"],
-            componentRestrictions: { country: "ru" },
-          }}
-          defaultValue="Amsterdam"
-        /> */}
-        <autocompolete.Form
-          control={control}
-          required
-          name="location"
-          placeholder="Select location..."
-          options={[
-            {
-              label: "3900 City Ave, Philadelphia, PA 19131, USA",
-              value: "3900 City Ave, Philadelphia, PA 19131, USA",
-            },
-            {
-              label: "3900 Woodland Ave, Philadelphia, PA 19104, USA",
-              value: "3900 Woodland Ave, Philadelphia, PA 19104, USA",
-            },
-            {
-              label: "455 Devon Park Dr, Wayne, PA 19087, USA",
-              value: "455 Devon Park Dr, Wayne, PA 19087, USA",
-            },
-            {
-              label: "381 W Dekalb Pike, King of Prussia, PA 19406, USA",
-              value: "381 W Dekalb Pike, King of Prussia, PA 19406, USA",
-            },
-            {
-              label: "23 Carland Rd, Conshohocken, PA 19428, USA",
-              value: "23 Carland Rd, Conshohocken, PA 19428, USA",
-            },
-          ]}
+
+        <CustomGoogleAutoComplete
+          {...{ control, name: "location" }}
+          onPlaceSelected={(selected) => handleLocationSelect(selected)}
         />
         <div className="flex gap-3">
           <Input.Form
@@ -226,16 +170,16 @@ const NewPlanForm = ({
         <autocompolete.Form
           control={control}
           required
-          name="service"
+          name="services"
           placeholder="Select service..."
           options={[
             { label: "Transport", value: "Transport" },
             { label: "Support", value: "Support" },
-            { label: "Post visit", value: "Post visit" },
-            { label: "Physical assistance", value: "Physical assistance" },
+            { label: "Post visit", value: "Post Visit" },
+            { label: "Physical assistance", value: "Physical Assistance" },
             {
               label: "Health monitor",
-              value: "Health monitor",
+              value: "Health Monitor",
             },
           ]}
         />

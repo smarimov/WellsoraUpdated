@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import dayjs from "dayjs";
+import { FieldValues } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -52,22 +53,12 @@ export const formatAmericanDate = (isoDate: string): string => {
   return dayjs(isoDate).format("MMM D, YYYY");
 };
 
-/**
- * Extracts time from an ISO date and formats it as "hh:mm A" (e.g., "10:00 AM").
- * @param isoDate - The ISO 8601 date string (e.g., "2025-02-15T10:00:00.000Z").
- * @returns {string} - Formatted time in "hh:mm A" format.
- */
-export const formatTimeAmerican = (isoDate: string): string => {
-  return dayjs(isoDate).format("hh:mm A");
+export const formatTimeAmerican = (time24: string): string => {
+  return dayjs(`2000-01-01T${time24}`).format("h:mm A");
 };
 
 export const formatCurrentDate = () => {
-  const date = new Date();
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  return dayjs().format("YYYY-MM-DD");
 };
 export const debounce = (func: (...args: any[]) => void, delay: number) => {
   let timer: NodeJS.Timeout;
@@ -78,3 +69,17 @@ export const debounce = (func: (...args: any[]) => void, delay: number) => {
     }, delay);
   };
 };
+
+export const passwordValidator =
+  <T extends FieldValues>(
+    confirmField?: string
+  ): ((value: string, fieldValues: T) => string | boolean) =>
+  (value, fieldValues) => {
+    if (confirmField != null && confirmField in fieldValues) {
+      const confirmValue = fieldValues[confirmField];
+      if (value !== confirmValue) return "Passwords do not match";
+    }
+    // const rules = checkPasswordRules(value).filter(([, , state]) => !state)
+    // if (rules.length > 0) return translate(checkPasswordRules(value).filter(([, , state]) => !state)[0]?.[1])
+    return false;
+  };

@@ -16,8 +16,8 @@ const generateMonthDates = (): DateItem[] => {
     const date = today.date(i);
     dates.push({
       day: i,
-      dayOfWeek: date.format("ddd"), // Short weekday name (Mon, Tue, etc.)
-      original: date.toISOString(), // Full date format
+      dayOfWeek: date.format("ddd"),
+      original: date.format("YYYY-MM-DD"),
     });
   }
 

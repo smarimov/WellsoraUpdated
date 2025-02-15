@@ -7,120 +7,93 @@ import { DASHBOARD_LIST } from "./tableConfig";
 import { useMemo, useState } from "react";
 import { Modal } from "@/components/Modal";
 import NewPlanForm from "./sections/NewPlanForm";
-import { TPlan, usePlan } from "@/context/PlanContext";
 import TimeList, { Appointment } from "./sections/TimeList";
 import DateList from "./sections/DateList";
-
-import {
-  debounce,
-  formatAmericanDate,
-  formatCurrentDate,
-  formatTimeAmerican,
-} from "@/utils";
+import { debounce, formatCurrentDate } from "@/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-
-const getUniquePatientCount = (appointments: TPlan[]): number => {
-  const uniquePatients = new Set(
-    appointments.map((appt) => `${appt.firstName} ${appt.lastName}`)
-  );
-  return uniquePatients.size;
-};
-
-const getCompletedPlan = (appointments: TPlan[]): number => {
-  const now = new Date();
-  now.setUTCHours(0, 0, 0, 0); // Normalize to 00:00:00 UTC
-
-  // Find the start of this week (Monday)
-  const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Move back to Monday
-  const thisMonday = new Date(now);
-  thisMonday.setUTCDate(now.getUTCDate() - daysSinceMonday);
-  thisMonday.setUTCHours(0, 0, 0, 0); // Start of this Monday
-
-  // Find the end of this week (Sunday)
-  const thisSunday = new Date(thisMonday);
-  thisSunday.setUTCDate(thisMonday.getUTCDate() + 6);
-  thisSunday.setUTCHours(23, 59, 59, 999); // End of this Sunday
-
-  return appointments.filter((appt) => {
-    const appointmentDate = new Date(appt.dateTime);
-    return (
-      appt.status === "resolved" &&
-      appointmentDate >= thisMonday &&
-      appointmentDate <= thisSunday
-    );
-  }).length;
-};
-
-const getUpcomingAppointments = (appointments: TPlan[]): number => {
-  const now = new Date();
-  now.setUTCHours(0, 0, 0, 0); // Normalize to 00:00:00 UTC
-
-  // Get the upcoming Monday
-  const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const daysUntilNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek; // Move to next Monday
-  const nextMonday = new Date(now);
-  nextMonday.setUTCDate(now.getUTCDate() + daysUntilNextMonday);
-  nextMonday.setUTCHours(0, 0, 0, 0); // Start of next Monday
-
-  // Get the next Sunday (end of next week)
-  const nextSunday = new Date(nextMonday);
-  nextSunday.setUTCDate(nextMonday.getUTCDate() + 6);
-  nextSunday.setUTCHours(23, 59, 59, 999); // End of next Sunday
-
-  return appointments.filter((appt) => {
-    const appointmentDate = new Date(appt.dateTime); // UTC datetime
-    return appointmentDate >= nextMonday && appointmentDate <= nextSunday;
-  }).length;
-};
+import { Plan, TCreatePlan } from "./api";
+import { useCarePlanMutations } from "./useCarePlanMutations";
+import { useCarePlans } from "./useCarePlans";
+import Metrics from "./sections/Metrics";
+import { Loading } from "@/components/Loading";
 
 const Main = () => {
   const isTablet = useMediaQuery("(max-width: 1200px)");
+  const { data: plans, isLoading, isFetching } = useCarePlans();
+  const [deletedId, setDeletedId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const {
+    createMutation,
+    updateMutation,
+    deleteMutation,
+    isDeleting,
+    isCreating,
+    isUpdating,
+  } = useCarePlanMutations();
+
+  const handleDelete = () => {
+    if (deletedId != null) {
+      deleteMutation.mutate(deletedId);
+      setDeleteModal(false);
+    }
+  };
   const [isScheduledModel, setIsScheduledModel] = useState(false);
-  const { plans, deletePlan, addPlan, updatePlan } = usePlan();
   const [selectedDay, setSelected] = useState(formatCurrentDate());
   const [isOpen, setIsOpen] = useState(false);
-  const [current, setCurrent] = useState("");
-  const [currentPlan, setCurrentPlan] = useState<TPlan | null>(null);
-  const debouncedSetSearchTerm = useMemo(() => debounce(setCurrent, 300), []);
-  const filteredData = useMemo((): TPlan[] => {
+  const [currentSearchText, setCurrentSearchText] = useState("");
+  const [selectedCarePlan, setSelectedCarePlan] = useState<Plan | null>(null);
+  const debouncedSetSearchTerm = useMemo(
+    () => debounce(setCurrentSearchText, 300),
+    []
+  );
+  const filteredCarePlans = useMemo((): Plan[] => {
+    if (!plans) return [];
     return plans
       .filter(
         (item) =>
-          item.appointmentName.toLowerCase().includes(current.toLowerCase()) ||
-          item.firstName.toLowerCase().includes(current.toLowerCase()) ||
-          item.lastName.toLowerCase().includes(current.toLowerCase()) ||
-          item.location.toLowerCase().includes(current.toLowerCase())
+          item.appointmentName
+            .toLowerCase()
+            .includes(currentSearchText.toLowerCase()) ||
+          item.firstName
+            .toLowerCase()
+            .includes(currentSearchText.toLowerCase()) ||
+          item.lastName
+            .toLowerCase()
+            .includes(currentSearchText.toLowerCase()) ||
+          item.location.toLowerCase().includes(currentSearchText.toLowerCase())
       )
-      .sort(
-        (a, b) =>
-          new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
-      );
-  }, [plans, current]);
+      .sort((a, b) => {
+        const dateTimeA = new Date(`${a.date}T${a.time}`);
+        const dateTimeB = new Date(`${b.date}T${b.time}`);
+        return dateTimeA.getTime() - dateTimeB.getTime();
+      });
+  }, [plans, currentSearchText]);
 
   const appointmentByDay = useMemo((): Appointment[] => {
+    if (!plans) return [];
     return plans
-      .filter((plan) => formatAmericanDate(plan.dateTime) === selectedDay)
+      .filter((plan) => plan.date === selectedDay)
       .map((plan) => ({
-        time: formatTimeAmerican(plan.dateTime),
+        time: plan.time,
         name: `${plan.firstName} ${plan.lastName}`,
-        date: formatAmericanDate(plan.dateTime),
+        date: plan.date,
         status: plan.status,
       }));
   }, [plans, selectedDay]);
-
-  const createAppointment = (data: Omit<TPlan, "id">) => {
-    if (currentPlan != null) {
-      updatePlan({ ...data, id: currentPlan.id });
+  const createAppointment = (data: TCreatePlan) => {
+    if (selectedCarePlan != null && selectedCarePlan._id) {
+      updateMutation.mutate({ id: selectedCarePlan._id, updatedData: data });
+      setSelectedCarePlan(null);
     } else {
-      addPlan(data);
+      createMutation.mutate(data);
     }
     setIsOpen(false);
   };
+
   return (
     <>
       <NavbarWrapper
-        title="Welcome, Bernie"
+        title=""
         subTitle="Here's what's happening with your appointments today"
         action={({ onClick }) => (
           <Button
@@ -130,7 +103,7 @@ const Main = () => {
             className="max-w-[215px] w-full"
             onClick={() => {
               onClick();
-              setCurrentPlan(null); // Reset before opening the modal
+              setSelectedCarePlan(null);
               setIsOpen(true);
             }}
           >
@@ -139,53 +112,17 @@ const Main = () => {
         )}
         isDashboard
       />
-      {/* min-w-[1300px] */}
       <div className="flex min-w-[1300px] overflow-x-auto h-full gap-5  ">
         <div className="flex-1 min-w-0 p-4 py-5 ">
           <DateList
             onDateSelect={(val) => {
-              setSelected(formatAmericanDate(val));
+              setSelected(val);
               if (isTablet) {
                 setIsScheduledModel(true);
               }
             }}
           />
-
-          <div className="flex justify-between gap-4 py-5 my-1">
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg   w-full  h-[100px]">
-              <p className="mb-2 text-lg font-bold text-center text-[#B4BAC5]">
-                Total appointments
-              </p>
-              <span className="block text-3xl font-bold text-center ">
-                {plans.length}
-              </span>
-            </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  w-full h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5] text-center">
-                Upcoming week
-              </p>
-              <span className="block text-3xl font-bold text-center ">
-                {getUpcomingAppointments(plans)}
-              </span>
-            </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg  w-full h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5] text-center">
-                Caring for
-              </p>
-              <span className="block text-3xl font-bold text-center">
-                {getUniquePatientCount(plans)}
-              </span>
-            </div>
-            <div className="p-2 bg-white shadow-custom border border-[#F0F0F0] rounded-lg max-w-[210px] w-full h-[100px]">
-              <p className="mb-2 text-lg font-bold text-[#B4BAC5] text-center">
-                Completed this week
-              </p>
-              <span className="block text-3xl font-bold text-center">
-                {getCompletedPlan(plans)}
-              </span>
-            </div>
-          </div>
-
+          <Metrics plans={plans} />
           <div className="flex items-center justify-between gap-3 py-5 my-1 mb-2">
             <p className="text-xl font-bold text-[#0F1527]">All appointments</p>
             {isTablet && (
@@ -205,15 +142,51 @@ const Main = () => {
             />
           </div>
 
-          <Table
-            data={filteredData}
-            header={DASHBOARD_LIST()}
-            onEditAction={(_, row) => {
-              setCurrentPlan(row);
-              setIsOpen(true);
+          <div className="relative flex justify-center w-full">
+            {(isLoading ||
+              isDeleting ||
+              isFetching ||
+              isCreating ||
+              isUpdating) && (
+              <Loading
+                text="Loading care plans... Please wait."
+                className="absolute top-36"
+              />
+            )}
+          </div>
+          <div
+            style={{
+              filter:
+                isLoading ||
+                isDeleting ||
+                isFetching ||
+                isCreating ||
+                isUpdating
+                  ? "blur(5px)"
+                  : "none",
+              pointerEvents:
+                isLoading ||
+                isDeleting ||
+                isFetching ||
+                isCreating ||
+                isUpdating
+                  ? "none"
+                  : "unset",
             }}
-            onDeleteAction={(_, row) => deletePlan(row.id)}
-          />
+          >
+            <Table
+              data={filteredCarePlans}
+              header={DASHBOARD_LIST()}
+              onEditAction={(_, row) => {
+                setSelectedCarePlan(row);
+                setIsOpen(true);
+              }}
+              onDeleteAction={(_, row) => {
+                setDeletedId(row._id);
+                setDeleteModal(true);
+              }}
+            />
+          </div>
         </div>
 
         {!isTablet ? (
@@ -235,7 +208,7 @@ const Main = () => {
         <NewPlanForm
           onClose={() => setIsOpen(false)}
           sendingData={createAppointment}
-          currentPlan={currentPlan}
+          currentPlan={selectedCarePlan}
         />
       </Modal>
       <Modal
@@ -245,6 +218,28 @@ const Main = () => {
       >
         <div>
           <TimeList appointments={appointmentByDay} isModalView />
+        </div>
+      </Modal>
+      <Modal
+        contentClass="max-w-[500px] w-full"
+        show={deleteModal}
+        onClose={() => setDeleteModal(false)}
+        title="Confirm Delete"
+        titlebarClass="hidden"
+      >
+        <div className="p-6 text-center bg-white rounded-lg shadow-lg">
+          <p className="mb-3 text-xl">Confirm delete</p>
+          <p className="mb-4">
+            Are you sure you want to delete this appointment?
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button variant="contained" color="primary" onClick={handleDelete}>
+              Confirm
+            </Button>
+            <Button variant="outline" onClick={() => setDeleteModal(false)}>
+              Cancel
+            </Button>
+          </div>
         </div>
       </Modal>
     </>

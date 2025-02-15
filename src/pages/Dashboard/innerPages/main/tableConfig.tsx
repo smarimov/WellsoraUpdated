@@ -1,12 +1,11 @@
 // import { ITableHead } from "@/Components/Table"
-
 import Label from "@/components/Label";
 import { ITableHead } from "@/components/Table";
-import { TPlan } from "@/context/PlanContext";
 import { formatAmericanDate, formatTimeAmerican } from "@/utils";
 import { COLOR_DIF } from "@/utils/colorMapping";
+import { Plan } from "./api";
 
-export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
+export const DASHBOARD_LIST = (): ITableHead<Plan>[] => [
   // {
   //   dataKey: "id",
   //   label: "id"
@@ -17,11 +16,9 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
     label: "Scheduled date",
     render: (data) => (
       <>
-        <p className="text-base font-medium">
-          {formatAmericanDate(data.dateTime)}
-        </p>
+        <p className="text-base font-medium">{formatAmericanDate(data.date)}</p>
         <span className="text-base text-[#B4BAC5] font-medium">
-          {formatTimeAmerican(data.dateTime)}
+          {formatTimeAmerican(data.time)}
         </span>
       </>
     ),
@@ -45,7 +42,7 @@ export const DASHBOARD_LIST = (): ITableHead<TPlan>[] => [
     label: "Services",
     render: (data) => (
       <div className="max-w-[100px] w-full">
-        <p className="text-base font-medium ">{data.service}</p>
+        <p className="text-base font-medium ">{data.services}</p>
       </div>
     ),
   },

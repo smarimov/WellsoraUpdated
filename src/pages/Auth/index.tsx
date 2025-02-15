@@ -1,15 +1,15 @@
 import { Button } from "@/components/Button";
-import { Input } from "@/components/Form";
-import { Icon } from "@/components/Icon";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils";
+import Register from "./Register";
 
 const LoginPage = () => {
   const isTablet = useMediaQuery("(max-width: 1024px)");
+  const [isLogin, setIsLogin] = useState(true);
   return (
     <div className="flex h-screen bg-Purple-main lg:bg-white">
       <div
@@ -24,7 +24,11 @@ const LoginPage = () => {
           </h1>
         )}
 
-        <Login />
+        {isLogin ? (
+          <Login loginMode={() => setIsLogin(false)} />
+        ) : (
+          <Register loginMode={() => setIsLogin(true)} />
+        )}
       </div>
       {!isTablet && (
         <div className="flex items-center justify-center flex-1 p-5 bg-Purple-main ">
@@ -41,44 +45,7 @@ const LoginPage = () => {
 
 export default LoginPage;
 
-const Register = () => {
-  return (
-    <div className="max-w-[460px] mx-auto text-center">
-      <p className="mb-4 text-5xl font-bold text-white lg:text-black">
-        Sign Up
-      </p>
-      <p className="text-xl font-medium  mb-4 text-white lg:text-[#5A5365]">
-        Join Welsora Health to manage care
-      </p>
-      <div className="flex flex-col gap-3 ">
-        <Input placeholder="Full Name" className="w-full" />
-        <Input placeholder="Email" className="w-full" />
-        <Input placeholder="Password" className="w-full" />
-        <Input placeholder="Re-enter Password" className="w-full" />
-        <Button variant="outline" className="lg:text-white lg:bg-Purple-main">
-          Get Started
-        </Button>
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-semibold text-white lg:text-[#5A5365]">
-            Already have an account? Login
-          </span>
-          <span className="text-sm text-white lg:text-[#5A5365]">
-            By continuing, you agree to our{" "}
-            <span className="text-white underline lg:text-Purple-main">
-              Terms & Conditions
-            </span>{" "}
-            and{" "}
-            <span className="text-white underline lg:text-Purple-main">
-              Privacy Policy
-            </span>{" "}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Login = () => {
+const Login = ({ loginMode }: { loginMode: VoidFunction }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -228,7 +195,13 @@ const Login = () => {
         </Button>
         <div className="flex flex-col gap-2">
           <span className="text-sm font-semibold text-white lg:text-Purple-main">
-            Not have an account? Signup
+            Not have an account?{" "}
+            <span
+              className="cursor-pointer hover:text-purple-500 "
+              onClick={loginMode}
+            >
+              Signup
+            </span>
           </span>
           <div className="flex items-center justify-center gap-3 my-4">
             <div>

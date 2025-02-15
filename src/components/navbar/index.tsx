@@ -6,6 +6,7 @@ import { Button } from "../Button";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/utils";
+import { useUserDetail } from "@/pages/Dashboard/innerPages/settings/useUser";
 
 interface NavbarWrapperProps {
   title: string;
@@ -21,6 +22,7 @@ const NavbarWrapper = ({
   setting = false,
   isDashboard = false,
 }: NavbarWrapperProps) => {
+  const { data: user, isLoading, isFetching } = useUserDetail();
   const isMobile = useMediaQuery("(max-width: 800px)");
   const isTablet = useMediaQuery("(max-width: 1270px)");
   const isSmallTablet = useMediaQuery("(max-width: 1040px)");
@@ -45,7 +47,7 @@ const NavbarWrapper = ({
                 "after:content-[''] after:inline-block after:w-10 after:h-10 after:bg-no-repeat after:bg-contain after:ml-2 after:bg-[url('/assets/hello.svg')]"
             )}
           >
-            {title}
+            {isDashboard && user ? `Welcome,  ${user.firstName}` : title}
           </p>
         </div>
         {subTitle && (
@@ -71,9 +73,15 @@ const NavbarWrapper = ({
             icon={<Icon icon="Notification" color="1B779B" size={24} />}
           ></Button>
         )}
-        {!setting && (
+        {!setting && user && (
           <>
-            {!isSmallTablet && <ProfileComponent />}
+            {!isSmallTablet && (
+              <ProfileComponent
+                firstName={user.firstName}
+                lastName={user.lastName}
+                email={user.email}
+              />
+            )}
             <div
               className="cursor-pointer"
               onClick={() => setOpen((prev) => !prev)}
@@ -94,7 +102,14 @@ const NavbarWrapper = ({
           label="Profile Settings"
           onClick={() => navigate("/settings")}
         />
-        {isSmallTablet && <ProfileComponent isMenu />}
+        {isSmallTablet && user && (
+          <ProfileComponent
+            isMenu
+            firstName={user.firstName}
+            lastName={user.lastName}
+            email={user.email}
+          />
+        )}
         {isTablet && (
           <div className="flex items-center justify-center p-2">
             {" "}
@@ -109,7 +124,17 @@ const NavbarWrapper = ({
 };
 export default NavbarWrapper;
 
-const ProfileComponent = ({ isMenu = false }: { isMenu?: Boolean }) => {
+const ProfileComponent = ({
+  isMenu = false,
+  firstName,
+  lastName,
+  email,
+}: {
+  isMenu?: Boolean;
+  firstName: string;
+  lastName: string;
+  email: string;
+}) => {
   return (
     <div className="flex items-center gap-2 p-2">
       <div
@@ -122,11 +147,9 @@ const ProfileComponent = ({ isMenu = false }: { isMenu?: Boolean }) => {
       </div>
       <div className="flex flex-col ">
         <span className="text-xs font-semibold text-Navy-main">
-          Bernie Sanders
+          {`${firstName} ${lastName}`}
         </span>
-        <span className=" text-[11px] font-normal text-Gray-main">
-          @BernieSanders
-        </span>
+        <span className=" text-[11px] font-normal text-Gray-main">{email}</span>
       </div>
     </div>
   );

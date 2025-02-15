@@ -1,45 +1,39 @@
-import { TStatus } from "@/context/PlanContext";
-import { cn } from "@/utils";
+import { cn, formatAmericanDate } from "@/utils";
 import React, { useEffect, useRef } from "react";
+import dayjs from "dayjs";
+import { TStatus } from "../api";
 
 export type Appointment = {
-  time: string; // Example: "07:05 AM"
+  time: string; // Now in "HH:mm" format (24-hour)
   name: string;
   date: string;
   status: TStatus;
 };
 
+/** ✅ Converts "HH:mm" (24-hour) to "h:mm A" (12-hour AM/PM) */
+const convertTo12HourFormat = (time24: string): string => {
+  return dayjs(`2000-01-01T${time24}`).format("h:mm A");
+};
+
+/** ✅ Generate time slots in 24-hour format (HH:mm) */
 const generateTimeSlots = (): string[] => {
-  const times: string[] = [];
-  for (let hour = 0; hour < 24; hour++) {
-    const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-    const ampm = hour < 12 ? "AM" : "PM";
-    times.push(`${formattedHour.toString().padStart(2, "0")}:00 ${ampm}`);
-  }
-  return times;
+  return Array.from(
+    { length: 24 },
+    (_, hour) => `${hour.toString().padStart(2, "0")}:00`
+  );
 };
 
 const getStatusStyles = (status: TStatus) => {
   switch (status) {
-    case "new":
+    case "New":
       return "bg-red-100 text-red-500 border-red-500";
-    case "progress":
+    case "In Progress":
       return "bg-orange-100 text-orange-500 border-orange-500";
-    case "resolved":
+    case "Resolved":
       return "bg-green-100 text-green-600 border-green-600";
     default:
       return "";
   }
-};
-
-// Extracts hour and AM/PM period
-const parseHourAndPeriod = (time: string): { hour: number; period: string } => {
-  const match = time.match(/(\d+):\d+\s*(AM|PM)/i);
-  if (!match) return { hour: -1, period: "" }; // Fallback case
-
-  const hour = parseInt(match[1], 10);
-  const period = match[2].toUpperCase();
-  return { hour, period };
 };
 
 const TimeList = ({
@@ -53,22 +47,19 @@ const TimeList = ({
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const firstAppointmentRef = useRef<HTMLDivElement | null>(null);
 
-  // Find first appointment slot
+  /** ✅ Extract hour from time */
+  const extractHour = (time: string): number =>
+    parseInt(time.split(":")[0], 10);
+
+  // Find the first appointment slot for auto-scroll
   const firstAppointmentTime = timeSlots.find((slot) =>
-    appointments.some((appt) => {
-      const { hour: apptHour, period: apptPeriod } = parseHourAndPeriod(
-        appt.time
-      );
-      const { hour: slotHour, period: slotPeriod } = parseHourAndPeriod(slot);
-      return apptHour === slotHour && apptPeriod === slotPeriod;
-    })
+    appointments.some((appt) => extractHour(appt.time) === extractHour(slot))
   );
 
-  // Scroll to the first appointment slot when appointments update
   useEffect(() => {
     if (firstAppointmentRef.current && scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
-        top: firstAppointmentRef.current.offsetTop - 200, // Adjust for spacing
+        top: firstAppointmentRef.current.offsetTop - 200,
         behavior: "smooth",
       });
     }
@@ -78,25 +69,19 @@ const TimeList = ({
     <div
       ref={scrollContainerRef}
       className={cn(
-        "fixed right-0 bg-white h-full [-ms-overflow-style:none] [scrollbar-width:none]  overflow-y-auto overflow-x-hidden border-l border-l-gray-300 p-2",
-        isModalView && "static max-h-[700px] h-full "
+        "fixed right-0 bg-white h-full overflow-y-auto border-l border-gray-300 p-2",
+        isModalView && "static max-h-[700px] h-full"
       )}
       style={{
-        width: !isModalView ? "min(370px, 100vw - 70%)" : "100%", // Max 370px, but shrinks on smaller screens
-        left: "calc(100% - min(370px, 100vw - 70%))", // Dynamically adjust left based on width
+        width: !isModalView ? "min(370px, 100vw - 70%)" : "100%",
+        left: "calc(100% - min(370px, 100vw - 70%))",
       }}
     >
       {timeSlots.map((slotTime) => {
-        const { hour: slotHour, period: slotPeriod } =
-          parseHourAndPeriod(slotTime);
-
-        // Find all appointments that match both the hour and AM/PM
-        const matchedAppointments = appointments.filter((appt) => {
-          const { hour: apptHour, period: apptPeriod } = parseHourAndPeriod(
-            appt.time
-          );
-          return apptHour === slotHour && apptPeriod === slotPeriod;
-        });
+        // Find appointments that match this hour
+        const matchedAppointments = appointments.filter(
+          (appt) => extractHour(appt.time) === extractHour(slotTime)
+        );
 
         return (
           <div
@@ -104,7 +89,9 @@ const TimeList = ({
             ref={slotTime === firstAppointmentTime ? firstAppointmentRef : null}
             className="flex items-center py-4 border-b border-gray-300 h-[100px]"
           >
-            <span className="mr-4 text-gray-500">{slotTime}</span>
+            <span className="mr-4 text-gray-500">
+              {convertTo12HourFormat(slotTime)}
+            </span>
 
             <div className="relative">
               {matchedAppointments.length > 0 &&
@@ -118,7 +105,7 @@ const TimeList = ({
                   >
                     <div>
                       <strong>{appt.name}</strong>
-                      <p className="text-sm">{appt.date}</p>
+                      <p className="text-sm">{formatAmericanDate(appt.date)}</p>
                       <p className="text-xs italic font-semibold capitalize">
                         {appt.status}
                       </p>
