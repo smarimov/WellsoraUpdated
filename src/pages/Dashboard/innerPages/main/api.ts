@@ -1,6 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+const careplanUrl = import.meta.env.VITE_CAREPLAN_URL;
+
 export type TStatus = "New" | "In Progress" | "Resolved";
 export type Plan = {
   _id: string;
@@ -26,7 +28,7 @@ export const fetchAllCarePlans = async () => {
   }
 
   const { data } = await axios.get(
-    "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/careplan",
+    careplanUrl,
     {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
     }
@@ -42,7 +44,7 @@ export const createCarePlan = async (payload: TCreatePlan): Promise<Plan> => {
   }
 
   const { data } = await axios.post<Plan>(
-    "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/careplan",
+    careplanUrl,
     payload,
     {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
@@ -61,7 +63,7 @@ export const deleteCarePlan = async (
   }
 
   const response = await axios.delete<{ success: boolean }>(
-    `https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/careplan/${carePlanId}`,
+    `${careplanUrl}/${carePlanId}`,
     {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
     }
@@ -83,7 +85,7 @@ export const updateCarePlan = async ({
   }
 
   const response = await axios.put<Plan>(
-    `https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/careplan/${id}`,
+    `${careplanUrl}/${id}`,
     updatedData,
     {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },

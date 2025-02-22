@@ -51,6 +51,8 @@ const Login = ({ loginMode }: { loginMode: VoidFunction }) => {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
 
+  const authLoginUrl = import.meta.env.VITE_AUTH_LOGIN_URL;
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -117,7 +119,7 @@ const Login = ({ loginMode }: { loginMode: VoidFunction }) => {
     try {
       // Make POST request to the login API
       const response = await axios.post(
-        "https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/login",
+        authLoginUrl,
         {
           email: email,
           password: password,

@@ -68,14 +68,14 @@ const Benefits = () => {
   );
   const [searchQuery, setSearchQuery] = useState("");
 
-  const BENEFIT_SEARCH_URL =
-    "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/benefits-search"; // Replace with your API URL
+  const benefitsSearchUrl = import.meta.env.VITE_BENEFITS_SEARCH_URL; // Replace with your API URL
+  const benefitsListUrl = import.meta.env.VITE_BENEFITS_LIST_URL; 
   const AUTH_TOKEN = Cookies.get("wellsora_token"); // Replace with your actual token
 
   const benefitsSearch = async () => {
     try {
       const response = await axios.post(
-        BENEFIT_SEARCH_URL,
+        benefitsSearchUrl,
         {
           searchQuery: searchQuery,
         },
@@ -149,7 +149,7 @@ const Benefits = () => {
       }
       setIsLoading(true);
       const response = await axios.get(
-        "https://benefits-service-dot-wellsora-app.uc.r.appspot.com/api/benefits?limit=100",
+        benefitsListUrl,
         {
           headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
         }

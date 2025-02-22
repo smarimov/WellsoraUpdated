@@ -23,6 +23,8 @@ const Register = ({ loginMode }: { loginMode: VoidFunction }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  const authSignupUrl = import.meta.env.VITE_AUTH_SIGNUP_URL;
+  
   const registerForm = useForm<TUserForm>({
     defaultValues: {
       firstName: "",
@@ -49,7 +51,7 @@ const Register = ({ loginMode }: { loginMode: VoidFunction }) => {
       // Make POST request to the register API
       setIsLoading(true);
       const response = await axios.post(
-        "https://auth-service-dot-wellsora-app.uc.r.appspot.com/auth/signup",
+        authSignupUrl,
         finalData
       );
 

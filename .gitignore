@@ -25,3 +25,7 @@ dist-ssr
 *.sw?
 .vercel
 tsconfig.app.tsbuildinfo
+
+# .env files
+.env.production
+.env.development

@@ -2,6 +2,8 @@ import axios from "axios";
 import { getAuthToken } from "../main/api";
 import { TUser, TUserForm } from "./useUser";
 
+const userUrl = import.meta.env.VITE_USER_URL;
+
 export const fetchUserDetail = async () => {
   const AUTH_TOKEN = getAuthToken();
   if (!AUTH_TOKEN) {
@@ -10,7 +12,7 @@ export const fetchUserDetail = async () => {
   }
 
   const { data } = await axios.get(
-    "https://auth-service-dot-wellsora-app.uc.r.appspot.com/user",
+    userUrl,
     {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
     }
@@ -32,7 +34,7 @@ export const updateUserDetail = async ({
   }
 
   const response = await axios.put<TUser>(
-    `https://auth-service-dot-wellsora-app.uc.r.appspot.com/user`,
+    userUrl,
     updatedData,
     {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },

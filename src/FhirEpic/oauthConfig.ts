@@ -1,10 +1,8 @@
 export const oauthConfig = {
-  clientId: "fbc9d880-3bcc-492c-86b0-232d3e8c5953",
-  redirectUri: "http://localhost:3000/medical-record/past-visit",
-  // redirectUri: "http://localhost:3000/connectingrecords",
-  authorizeUrl:
-    "https://fhir.epic.com/interconnect-fhir-oauth/oauth2/authorize",
-  tokenUrl: "https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token",
+  clientId: import.meta.env.VITE_EPIC_FHIR_CLIENT_ID,
+  redirectUri: import.meta.env.VITE_EPIC_FHIR_REDIRECT_URL,
+  authorizeUrl: import.meta.env.VITE_EPIC_FHIR_AUTH_URL,
+  tokenUrl: import.meta.env.VITE_EPIC_FHIR_TOKEN_URL,
   scope: "openid",
-  audience: "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4",
+  audience: import.meta.env.VITE_EPIC_FHIR_API_SERVER_URL,
 };

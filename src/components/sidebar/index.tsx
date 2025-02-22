@@ -112,9 +112,10 @@ const Sidebar = () => {
       <ul className={cn("mt-auto", isMobile && "mt-0")}>
         <li>
           <NavLink
-            to="settings"
-            className={clsx(
+            to="/settings"
+            className={({ isActive }) => clsx(
               "sidebar__links",
+              { active_link: isActive },
               isMobile && "justify-center p-2 rounded mb-4"
             )}
             end
@@ -126,8 +127,9 @@ const Sidebar = () => {
         <li>
           <NavLink
             to="/privacy"
-            className={clsx(
+            className={({ isActive }) => clsx(
               "sidebar__links",
+              { active_link: isActive },
               isMobile && "justify-center p-2 rounded mb-4"
             )}
             end

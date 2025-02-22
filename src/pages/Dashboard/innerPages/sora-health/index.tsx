@@ -47,14 +47,13 @@ const SoarHeath = () => {
     doctor immediately."
   );
 
-  const SORA_SEARCH_URL =
-    "https://proxy-api-service-dot-wellsora-app.uc.r.appspot.com/api/proxy/sora-search"; // Replace with your API URL
+  const soraSearchUrl = import.meta.env.VITE_SORA_SEARCH_URL; // Replace with your API URL
   const AUTH_TOKEN = Cookies.get("wellsora_token"); // Replace with your actual token
 
   const soraSearch = async () => {
     try {
       const response = await axios.post(
-        SORA_SEARCH_URL,
+        soraSearchUrl,
         {
           searchQuery: searchQuery,
         },

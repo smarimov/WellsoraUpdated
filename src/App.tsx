@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Main from "./pages/Dashboard/innerPages/main";
-import SoarHeath from "./pages/Dashboard/innerPages/soar-health";
+import SoarHeath from "./pages/Dashboard/innerPages/sora-health";
 import CareGiver from "./pages/Dashboard/innerPages/care-giver";
 import Benefits from "./pages/Dashboard/innerPages/benefits";
 import MedicalRecord from "./pages/Dashboard/innerPages/medical-record";
